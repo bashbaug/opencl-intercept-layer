@@ -682,6 +682,13 @@ public:
                 cl_event event,
                 uint64_t queuedTime );
 
+    void    updateCommandBatch(
+                cl_command_queue queue,
+                bool transitionToProcessing,
+                bool transitionToFinishing,
+                const std::string& functionName,
+                const cl_kernel kernel );
+
 private:
     static const char* sc_URL;
     static const char* sc_DumpDirectoryName;
@@ -986,6 +993,29 @@ private:
     typedef std::map< cl_command_queue, SITTQueueInfo > CITTQueueInfoMap;
     CITTQueueInfoMap    m_ITTQueueInfoMap;
 #endif
+
+    // For command batch reporting:
+    struct SCurrentCommandBatch
+    {
+        SCurrentCommandBatch() : Processing( true ) {}
+
+        // A command batch is either processing (collecting non-blocking
+        // commands) or finishing (performing blocking commands).  A
+        // transition from "finishing" to "processing" ends the current
+        // batch and starts a new batch.
+        bool    Processing;
+
+        // For now, the batch description is just some list of OpenCL APIs
+        // that makes up the batch.  We can eventually make this more
+        // complicated.
+        std::string BatchDescription;
+    };
+
+    typedef std::map< cl_command_queue, SCurrentCommandBatch >  CCurrentCommandBatchMap;
+    CCurrentCommandBatchMap m_CurrentCommandBatchMap;
+
+    typedef std::map< std::string, unsigned int >   CCommandBatchCountMap;
+    CCommandBatchCountMap   m_CommandBatchCounts;
 
     DISALLOW_COPY_AND_ASSIGN( CLIntercept );
 };
@@ -2107,6 +2137,15 @@ inline __itt_domain* CLIntercept::ittDomain() const
 }
 
 #endif
+
+///////////////////////////////////////////////////////////////////////////////
+//
+#define UPDATE_COMMAND_BATCH( _queue, _to_processing, _to_finishing )       \
+    if( pIntercept->config().CommandBatchLogging )                          \
+    {                                                                       \
+        pIntercept->updateCommandBatch(                                     \
+            _queue, _to_processing, _to_finishing, __FUNCTION__, NULL );    \
+    }
 
 ///////////////////////////////////////////////////////////////////////////////
 //

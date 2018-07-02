@@ -864,6 +864,24 @@ void CLIntercept::writeReport(
         reportMDAPICounters( os );
     }
 #endif
+
+    if( config().CommandBatchLogging &&
+        !m_CommandBatchCounts.empty() )
+    {
+        os << std::endl << "Command Batch Reports: " << m_CommandBatchCounts.size() << " batches:" << std::endl;
+
+        CCommandBatchCountMap::const_iterator i = m_CommandBatchCounts.begin();
+        while( i != m_CommandBatchCounts.end() )
+        {
+            const std::string& description = (*i).first;
+            unsigned int count = (*i).second;
+
+            os << std::endl << "%%% Count = " << count << std::endl;
+            os << description;
+
+            ++i;
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -10804,6 +10822,45 @@ void CLIntercept::chromeTraceEvent(
     {
         log( "chromeTraceEvent(): OpenCL error\n" );
     }
+}
+
+void CLIntercept::updateCommandBatch(
+    cl_command_queue queue,
+    bool transitionToProcessing,
+    bool transitionToFinishing,
+    const std::string& functionName,
+    const cl_kernel kernel )
+{
+    m_OS.EnterCriticalSection();
+
+    // The three possibilities should be:
+    // - Transition to processing, to start a new batch.
+    // - Transition to finishing, which starts the process of ending the current batch.
+    // - Do nothing - leave the batch in the current state.
+    // It doesn't make sense to both start an new batch and start ending the current batch.
+    CLI_ASSERT( ( transitionToProcessing && transitionToFinishing ) == false );
+
+    SCurrentCommandBatch&   batch = m_CurrentCommandBatchMap[ queue ];
+
+    // If the current batch is NOT processing, and we're transitioning to
+    // processing, aggregate the current batch and start a new batch.
+    if( batch.Processing == false && transitionToProcessing )
+    {
+        m_CommandBatchCounts[ batch.BatchDescription ]++;
+
+        batch.Processing = true;
+        batch.BatchDescription.clear();
+    }
+
+    if( transitionToFinishing )
+    {
+        batch.Processing = false;
+    }
+
+    batch.BatchDescription += functionName;
+    batch.BatchDescription += "\n";
+
+    m_OS.LeaveCriticalSection();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
