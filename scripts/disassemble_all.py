@@ -48,7 +48,7 @@ else:
 
     for file in os.listdir(isabinDir):
         if file.endswith(".isabin"):
-            numberOfFiles = numberOfFiles = 1
+            numberOfFiles = numberOfFiles + 1
             binFileName = isabinDir + '/' + file;
             isaFileName = isabinDir + '/' + file[:-7] + '.isa';	# strip .isabin, add .isa
             print('Disassembling ' + binFileName)
