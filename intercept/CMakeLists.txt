@@ -160,10 +160,34 @@ elseif(APPLE)
     # never enabled on OSX (for now)
 endif()
 
+# LTTng Support (optional)
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR
+   ${CMAKE_SYSTEM_NAME} STREQUAL "Android")
+    # conditionally enabled on Linux and Android
+    if(ENABLE_LTTNG)
+        message(STATUS "Enabling support for LTTng.")
+        target_compile_definitions(OpenCL PRIVATE USE_LTTNG)
+        target_include_directories(OpenCL PRIVATE lttng)
+        set(CLINTERCEPT_LTTNG_FILES
+            lttng/cli-tp.h
+            lttng/cli-tp.cpp
+        )
+        source_group(LTTNG FILES
+            ${CLINTERCEPT_LTTNG_FILES}
+        )
+        target_sources(OpenCL PRIVATE
+            ${CLINTERCEPT_LTTNG_FILES}
+        )
+        target_link_libraries(OpenCL lttng-ust)
+    else()
+        message(STATUS "LTTng is not enabled.")
+    endif()
+endif()
+
 # MDAPI Support (optional)
 if(ENABLE_MDAPI)
     target_compile_definitions(OpenCL PRIVATE USE_MDAPI)
-    include_directories(mdapi)
+    target_include_directories(OpenCL PRIVATE mdapi)
     set(CLINTERCEPT_MDAPI_FILES
         mdapi/DriverStorePath.h
         mdapi/intercept_mdapi.cpp

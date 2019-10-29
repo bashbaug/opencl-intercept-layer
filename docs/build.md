@@ -57,6 +57,7 @@ See your CMake documentation for more details.
 | ENABLE_CLIPROF | BOOL | Enables building the old cliprof loader utility.  Additionally, when required, enables code in the Intercept Layer for OpenCL Applications itself to enable cliprof functionality.  Default: `FALSE`
 | ENABLE_ITT | BOOL | Enables support for Instrumentation and Tracing Techology APIs, which can be used to display OpenCL events on Intel(R) VTune(tm) timegraphs.  Default: `FALSE`
 | ENABLE_KERNEL_OVERRIDES | BOOL | Enables embedding kernel strings to override precompiled kernels and built-in kernels.  Supported for Linux and Android builds only, since Windows builds always embeds kernel strings, and embedding kernel strings is not support for OSX (yet!).  Default: `TRUE`
+| ENABLE_LTTNG | BOOL | Enable Linux Trace Toolkit: next generation (LTTng) Support, which can be used for tracing on Linux.  Default: `FALSE`
 | ENABLE_MDAPI | BOOL | Enables support for the Intel Metrics Discovery API, which can be used to collect and aggregate Intel GPU performance metrics.  Default: `TRUE`
 | VTUNE_INCLUDE_DIR | PATH | Path to the directory containing `ittnotify.h`.  Only used when ENABLE_ITT is set.
 | VTUNE_ITTNOTIFY_LIB | FILEPATH | Path to the `ittnotify` lib.  Only used when ENABLE_ITT is set.

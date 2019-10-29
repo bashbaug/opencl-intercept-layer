@@ -168,6 +168,21 @@ inline void add_task_metadata_array(
 
 #endif
 
+#if defined(USE_LTTNG)
+
+#include "cli-tp.h"
+#define LTTNG_TRACE( _api, ... )    \
+    if( pIntercept->config().LTTngCallLogging )                                                 \
+    {                                                                                           \
+        tracepoint(CLIntercept, _api, ##__VA_ARGS__ );                                          \
+    }
+
+#else
+
+#define LTTNG_TRACE( _api, ... )
+
+#endif
+
 #define CHROME_REGISTER_COMMAND_QUEUE(_queue)                                                   \
     if( pIntercept->config().ChromePerformanceTiming )                                          \
     {                                                                                           \

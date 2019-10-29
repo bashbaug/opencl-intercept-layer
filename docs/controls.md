@@ -154,6 +154,10 @@ If set to a nonzero value, logs the elapsed time in microseconds in addition to 
 
 If set to a nonzero value, logs function entry and exit information for every OpenCL call using the ITT APIs.  This feature will only function if the Intercept Layer for OpenCL Applications is built with ITT support.
 
+##### `LTTngCallLogging` (bool)
+
+If set to a nonzero value, logs function entry and exit information for every OpenCL call using LTTng APIs.  This feature will only function if the Intercept Layer for OpenCL Applications is built with LTTng support.
+
 ##### `ChromeCallLogging` (bool)
 
 If set to a nonzero value, logs function entry and exit information for every OpenCL call to a JSON file that may be used for Chrome Tracing.

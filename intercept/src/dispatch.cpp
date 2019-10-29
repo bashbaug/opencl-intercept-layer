@@ -38,6 +38,11 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clGetPlatformIDs)(
         LOG_CLINFO();
 
         CALL_LOGGING_ENTER();
+        LTTNG_TRACE(
+            clGetPlatformIDs,
+            num_entries,
+            platforms,
+            num_platforms );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int  retVal = pIntercept->dispatch().clGetPlatformIDs(
@@ -84,6 +89,13 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clGetPlatformInfo)(
             platformInfo.c_str(),
             pIntercept->enumName().name( param_name ).c_str(),
             param_name );
+        LTTNG_TRACE(
+            clGetPlatformInfo,
+            platform,
+            param_name,
+            param_value_size,
+            param_value,
+            param_value_size_ret );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int  retVal = CL_SUCCESS;
@@ -144,6 +156,13 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clGetDeviceIDs)(
             platformInfo.c_str(),
             pIntercept->enumName().name_device_type( device_type ).c_str(),
             device_type );
+        LTTNG_TRACE(
+            clGetDeviceIDs,
+            platform,
+            device_type,
+            num_entries,
+            devices,
+            num_devices );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int retVal = CL_SUCCESS;
@@ -198,6 +217,13 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clGetDeviceInfo)(
             deviceInfo.c_str(),
             pIntercept->enumName().name( param_name ).c_str(),
             param_name );
+        LTTNG_TRACE(
+            clGetDeviceInfo,
+            device,
+            param_name,
+            param_value_size,
+            param_value,
+            param_value_size_ret );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int  retVal = CL_SUCCESS;
@@ -250,6 +276,13 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clCreateSubDevices)(
     if( pIntercept )
     {
         CALL_LOGGING_ENTER();
+        LTTNG_TRACE(
+            clCreateSubDevices,
+            in_device,
+            properties,
+            num_devices,
+            out_devices,
+            num_devices_ret );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int  retVal = pIntercept->dispatch().clCreateSubDevices(
@@ -309,6 +342,9 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clRetainDevice)(
         CALL_LOGGING_ENTER( "[ ref count = %d ] device = %p",
             ref_count,
             device );
+        LTTNG_TRACE(
+            clRetainDevice,
+            device );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int  retVal = pIntercept->dispatch().clRetainDevice(
@@ -361,6 +397,9 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clReleaseDevice)(
         }
         CALL_LOGGING_ENTER( "[ ref count = %d ] device = %p",
             ref_count,
+            device );
+        LTTNG_TRACE(
+            clReleaseDevice,
             device );
         CPU_PERFORMANCE_TIMING_START();
 
@@ -426,6 +465,14 @@ CL_API_ENTRY cl_context CL_API_CALL CLIRN(clCreateContext)(
             contextProperties.c_str(),
             num_devices,
             deviceInfo.c_str() );
+        LTTNG_TRACE(
+            clCreateContext,
+            properties,
+            num_devices,
+            devices,
+            (void*)pfn_notify,
+            user_data,
+            errcode_ret );
         CREATE_CONTEXT_OVERRIDE_INIT( properties, pfn_notify, user_data, newProperties );
         CHECK_ERROR_INIT( errcode_ret );
         CPU_PERFORMANCE_TIMING_START();
@@ -508,6 +555,13 @@ CL_API_ENTRY cl_context CL_API_CALL CLIRN(clCreateContextFromType)(
             contextProperties.c_str(),
             pIntercept->enumName().name_device_type( device_type ).c_str(),
             device_type );
+        LTTNG_TRACE(
+            clCreateContextFromType,
+            properties,
+            device_type,
+            (void*)pfn_notify,
+            user_data,
+            errcode_ret );
         CREATE_CONTEXT_OVERRIDE_INIT( properties, pfn_notify, user_data, newProperties );
         CHECK_ERROR_INIT( errcode_ret );
         CPU_PERFORMANCE_TIMING_START();
@@ -585,6 +639,9 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clRetainContext)(
         CALL_LOGGING_ENTER( "[ ref count = %d ] context = %p",
             ref_count,
             context );
+        LTTNG_TRACE(
+            clRetainContext,
+            context );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int retVal = pIntercept->dispatch().clRetainContext(
@@ -636,6 +693,9 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clReleaseContext)(
         }
         CALL_LOGGING_ENTER( "[ ref count = %d ] context = %p",
             ref_count,
+            context );
+        LTTNG_TRACE(
+            clReleaseContext,
             context );
         CPU_PERFORMANCE_TIMING_START();
 
@@ -692,6 +752,13 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clGetContextInfo)(
         CALL_LOGGING_ENTER( "param_name = %s (%08X)",
             pIntercept->enumName().name( param_name ).c_str(),
             param_name );
+        LTTNG_TRACE(
+            clGetContextInfo,
+            context,
+            param_name,
+            param_value_size,
+            param_value,
+            param_value_size_ret );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int retVal = pIntercept->dispatch().clGetContextInfo(
@@ -746,6 +813,12 @@ CL_API_ENTRY cl_command_queue CL_API_CALL CLIRN(clCreateCommandQueue)(
             deviceInfo.c_str(),
             pIntercept->enumName().name_command_queue_properties( properties ).c_str(),
             properties );
+        LTTNG_TRACE(
+            clCreateCommandQueue,
+            context,
+            device,
+            properties,
+            errcode_ret );
         CREATE_COMMAND_QUEUE_PROPERTIES_INIT( device, properties, newProperties );
 
         pIntercept->modifyCommandQueueProperties( properties );
@@ -835,6 +908,9 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clRetainCommandQueue)(
         CALL_LOGGING_ENTER( "[ ref count = %d ] command_queue = %p",
             ref_count,
             command_queue );
+        LTTNG_TRACE(
+            clRetainCommandQueue,
+            command_queue );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int retVal = pIntercept->dispatch().clRetainCommandQueue(
@@ -887,6 +963,9 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clReleaseCommandQueue)(
         CALL_LOGGING_ENTER( "[ ref count = %d ] command_queue = %p",
             ref_count,
             command_queue );
+        LTTNG_TRACE(
+            clReleaseCommandQueue,
+            command_queue );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int retVal = pIntercept->dispatch().clReleaseCommandQueue(
@@ -929,6 +1008,13 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clGetCommandQueueInfo)(
         CALL_LOGGING_ENTER( "param_name = %s (%08X)",
             pIntercept->enumName().name( param_name ).c_str(),
             param_name );
+        LTTNG_TRACE(
+            clGetCommandQueueInfo,
+            command_queue,
+            param_name,
+            param_value_size,
+            param_value,
+            param_value_size_ret );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int retVal = pIntercept->dispatch().clGetCommandQueueInfo(
@@ -968,6 +1054,12 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clSetCommandQueueProperty)(
     if( pIntercept )
     {
         CALL_LOGGING_ENTER();
+        LTTNG_TRACE(
+            clSetCommandQueueProperty,
+            command_queue,
+            properties,
+            enable,
+            old_properties );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int retVal = pIntercept->dispatch().clSetCommandQueueProperty(
@@ -1011,6 +1103,13 @@ CL_API_ENTRY cl_mem CL_API_CALL CLIRN(clCreateBuffer)(
             flags,
             size,
             host_ptr );
+        LTTNG_TRACE(
+            clCreateBuffer,
+            context,
+            flags,
+            size,
+            host_ptr,
+            errcode_ret );
         INITIALIZE_BUFFER_CONTENTS_INIT( flags, size, host_ptr );
         CHECK_ERROR_INIT( errcode_ret );
         CPU_PERFORMANCE_TIMING_START();
@@ -1070,6 +1169,13 @@ CL_API_ENTRY cl_mem CL_API_CALL CLIRN(clCreateSubBuffer)(
             pIntercept->enumName().name_mem_flags( flags ).c_str(),
             flags,
             argsString.c_str() );
+        LTTNG_TRACE(
+            clCreateSubBuffer,
+            buffer,
+            flags,
+            buffer_create_type,
+            buffer_create_info,
+            errcode_ret );
         CHECK_ERROR_INIT( errcode_ret );
         CPU_PERFORMANCE_TIMING_START();
 
@@ -1153,6 +1259,14 @@ CL_API_ENTRY cl_mem CL_API_CALL CLIRN(clCreateImage)(
         {
             CALL_LOGGING_ENTER();
         }
+        LTTNG_TRACE(
+            clCreateImage,
+            context,
+            flags,
+            image_format,
+            image_desc,
+            host_ptr,
+            errcode_ret );
 
         CHECK_ERROR_INIT( errcode_ret );
         CPU_PERFORMANCE_TIMING_START();
@@ -1226,6 +1340,16 @@ CL_API_ENTRY cl_mem CL_API_CALL CLIRN(clCreateImage2D)(
         {
             CALL_LOGGING_ENTER();
         }
+        LTTNG_TRACE(
+            clCreateImage2D,
+            context,
+            flags,
+            image_format,
+            image_width,
+            image_height,
+            image_row_pitch,
+            host_ptr,
+            errcode_ret );
 
         CHECK_ERROR_INIT( errcode_ret );
         CPU_PERFORMANCE_TIMING_START();
@@ -1308,6 +1432,7 @@ CL_API_ENTRY cl_mem CL_API_CALL CLIRN(clCreateImage3D)(
         {
             CALL_LOGGING_ENTER();
         }
+        //LTTNG_TRACE( clCreateImage3D );
 
         CHECK_ERROR_INIT( errcode_ret );
         CPU_PERFORMANCE_TIMING_START();
@@ -1371,6 +1496,9 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clRetainMemObject)(
         CALL_LOGGING_ENTER( "[ ref count = %d ] mem = %p",
             ref_count,
             memobj );
+        LTTNG_TRACE(
+            clRetainMemObject,
+            memobj );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int  retVal = pIntercept->dispatch().clRetainMemObject(
@@ -1425,6 +1553,9 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clReleaseMemObject)(
         CALL_LOGGING_ENTER( "[ ref count = %d ] mem = %p",
             ref_count,
             memobj );
+        LTTNG_TRACE(
+            clReleaseMemObject,
+            memobj );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int  retVal = pIntercept->dispatch().clReleaseMemObject(
@@ -1469,6 +1600,14 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clGetSupportedImageFormats)(
             flags,
             pIntercept->enumName().name( image_type ).c_str(),
             image_type );
+        LTTNG_TRACE(
+            clGetSupportedImageFormats,
+            context,
+            flags,
+            image_type,
+            num_entries,
+            image_formats,
+            num_image_formats );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int  retVal = pIntercept->dispatch().clGetSupportedImageFormats(
@@ -1514,6 +1653,13 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clGetMemObjectInfo)(
             memobj,
             pIntercept->enumName().name( param_name ).c_str(),
             param_name );
+        LTTNG_TRACE(
+            clGetMemObjectInfo,
+            memobj,
+            param_name,
+            param_value_size,
+            param_value,
+            param_value_size_ret );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int  retVal = pIntercept->dispatch().clGetMemObjectInfo(
@@ -1557,6 +1703,13 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clGetImageInfo)(
             image,
             pIntercept->enumName().name( param_name ).c_str(),
             param_name );
+        LTTNG_TRACE(
+            clGetImageInfo,
+            image,
+            param_name,
+            param_value_size,
+            param_value,
+            param_value_size_ret );
         CPU_PERFORMANCE_TIMING_START();
 
         cl_int  retVal = pIntercept->dispatch().clGetImageInfo(

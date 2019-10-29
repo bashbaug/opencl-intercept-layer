@@ -59,6 +59,7 @@ if(WIN32)
 endif()
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Android")
     option(ENABLE_KERNEL_OVERRIDES "Enable Embedding Kernel Override Strings" ON)
+    option(ENABLE_LTTNG "Enable Linux Trace Toolkit: next generation (LTTng) Support")
 endif()
 
 # This uses modules from: https://github.com/rpavlik/cmake-modules
