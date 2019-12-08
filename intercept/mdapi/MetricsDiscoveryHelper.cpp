@@ -43,7 +43,13 @@ static const wchar_t* cMDLibFileName =
 
 #include "DriverStorePath.h"
 
-#define OpenLibrary(_filename)              (void*)LoadDynamicLibrary( _filename )
+static void* OpenLibrary( const std::string& metricsLibraryName )
+{
+    return !metricsLibraryName.empty() ?
+        (void*)LoadLibraryA(metricsLibraryName.c_str()) :
+        (void*)LoadDynamicLibrary(cMDLibFileName);
+}
+
 #define GetFunctionAddress(_handle, _name)  GetProcAddress((HMODULE)_handle, _name)
 
 #elif defined(__linux__) || defined(__APPLE__)
@@ -57,7 +63,13 @@ static const char* cMDLibFileName = "libigdmd.dylib";
 #include <stdarg.h>
 #include <string.h>
 
-#define OpenLibrary(_filename)              dlopen( _filename, RTLD_LAZY | RTLD_LOCAL )
+static void* OpenLibrary( const std::string& metricsLibraryName )
+{
+    return !metricsLibraryName.empty() ?
+        dlopen(metricsLibraryName.c_str(), RTLD_LAZY | RTLD_LOCAL) :
+        dlopen(cMDLibFileName, RTLD_LAZY | RTLD_LOCAL);
+}
+
 #define GetFunctionAddress(_handle, _name)  dlsym(_handle, _name)
 #define GetLastError()                      dlerror()
 #define OutputDebugString(_buf)             fprintf(stderr, "%s", _buf);
@@ -199,18 +211,9 @@ bool MDHelper::InitMetricsDiscovery(
         return false;
     }
 
-    std::string actualMetricsLibName;
-
-    if (metricsLibraryName == "")
-    {
-      actualMetricsLibName = cMDLibFileName;
-    }
-    else
-    {
-      actualMetricsLibName = metricsLibraryName;
-    }
-
-    void* pLibrary = OpenLibrary(actualMetricsLibName.c_str());
+    // Open the MDAPI library from the passed-in file name if provided, or from
+    // a default file name otherwise.
+    void* pLibrary = OpenLibrary(metricsLibraryName);
     if (pLibrary == NULL)
     {
         DebugPrint("Couldn't load metrics discovery library!");
