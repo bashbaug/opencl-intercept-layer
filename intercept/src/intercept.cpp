@@ -8404,6 +8404,24 @@ bool CLIntercept::overrideGetDeviceInfo(
             override = true;
         }
         break;
+    case CL_DEVICE_TOPOLOGY_AMD:
+        if( m_Config.Emulate_cl_amd_device_topology )
+        {
+            #define CL_DEVICE_TOPOLOGY_TYPE_AMD 1
+            cl_device_topology_amd value = {0};
+            value.raw.type = CL_DEVICE_TOPOLOGY_TYPE_AMD;
+            value.pcie.bus = 0;
+            value.pcie.device = 2;
+            value.pcie.function = 0;
+            cl_device_topology_amd* ptr = (cl_device_topology_amd*)param_value;
+            errorCode = writeParamToMemory(
+                param_value_size,
+                value,
+                param_value_size_ret,
+                ptr );
+            override = true;
+        }
+        break;
     case CL_DEVICE_NUMERIC_VERSION_KHR:
         if( m_Config.Emulate_cl_khr_extended_versioning )
         {

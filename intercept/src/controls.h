@@ -102,6 +102,7 @@ CLI_CONTROL( bool,          DumpProgramBuildLogs,                   false, "If s
 CLI_CONTROL( bool,          DumpKernelISABinaries,                  false, "If set to a nonzero value, the Intercept Layer for OpenCL Applications will dump kernel ISA binaries for every kernel, if supported.  An ISA binaries can decoded into ISA text with a disassembler.  The filename will have the form \"CLI_<Program Number>_<Unique Program Hash Code>_<Compile Count>_<Unique Build Options Hash Code>_<Device Type>_<Kernel Name>.isabin\"." )
 
 CLI_CONTROL_SEPARATOR( Controls for Emulating Features: )
+CLI_CONTROL( bool,          Emulate_cl_amd_device_topology,         false, "If set to a nonzero value, the Intercept Layer for OpenCL Applications will emulate support for the cl_amd_device_topology extension." )
 CLI_CONTROL( bool,          Emulate_cl_khr_extended_versioning,     false, "If set to a nonzero value, the Intercept Layer for OpenCL Applications will emulate support for the cl_khr_extended_versioning extension." )
 
 CLI_CONTROL_SEPARATOR( Controls for Automatically Creating SPIR-V Modules: )
