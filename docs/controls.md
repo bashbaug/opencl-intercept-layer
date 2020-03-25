@@ -391,6 +391,10 @@ If set to a nonzero value, the Intercept Layer for OpenCL Applications will dump
 
 ### Controls for Emulating Features
 
+##### `Emulate_cl_amd_device_topology` (bool)
+
+If set to a nonzero value, the Intercept Layer for OpenCL Applications will emulate support for the cl\_amd\_device\_topology extension.
+
 ##### `Emulate_cl_khr_extended_versioning` (bool)
 
 If set to a nonzero value, the Intercept Layer for OpenCL Applications will emulate support for the cl\_khr\_extended\_versioning extension.
