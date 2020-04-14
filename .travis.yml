@@ -19,4 +19,4 @@ script:
   - mkdir -p build
   - cd build
   - cmake -DENABLE_CLILOADER=1 ..
-  - make -j 4
+  - cmake --build .
