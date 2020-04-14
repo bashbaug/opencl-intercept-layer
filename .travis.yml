@@ -7,7 +7,10 @@ compiler:
 os:
   - linux
   - osx
-  - windows
+
+jobs:
+  include:
+  - os: windows
 
 # Basic coding standard checks:
 # - Uses spaces, not tabs.
