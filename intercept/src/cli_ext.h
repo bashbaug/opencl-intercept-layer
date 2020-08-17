@@ -22,6 +22,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // cl_khr_fp16
 #define CL_DEVICE_HALF_FP_CONFIG                         0x1033
 
@@ -1012,3 +1016,7 @@ clEnqueueMemAdviseINTEL(
 // cl_arm_printf extension
 #define CL_PRINTF_CALLBACK_ARM                      0x40B0
 #define CL_PRINTF_BUFFERSIZE_ARM                    0x40B1
+
+#ifdef __cplusplus
+}
+#endif

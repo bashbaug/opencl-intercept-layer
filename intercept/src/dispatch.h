@@ -25,40 +25,37 @@
 #include "common.h"
 #include "cli_ext.h"
 
-#define CLI_API_ENTRY   CL_API_ENTRY
-#define CLI_API_CALL    CL_API_CALL
-
 // Dispatch table for core APIs:
 
 struct CLdispatch
 {
-    cl_int  (CLI_API_CALL *clGetPlatformIDs) (
+    cl_int  (CL_API_CALL *clGetPlatformIDs) (
                 cl_uint num_entries,
                 cl_platform_id* platforms,
                 cl_uint* num_platforms );
 
-    cl_int  (CLI_API_CALL *clGetPlatformInfo) (
+    cl_int  (CL_API_CALL *clGetPlatformInfo) (
                 cl_platform_id platform,
                 cl_platform_info param_name,
                 size_t param_value_size,
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_int  (CLI_API_CALL *clGetDeviceIDs) (
+    cl_int  (CL_API_CALL *clGetDeviceIDs) (
                 cl_platform_id platform,
                 cl_device_type device_type,
                 cl_uint num_entries,
                 cl_device_id* devices,
                 cl_uint* num_devices );
 
-    cl_int  (CLI_API_CALL *clGetDeviceInfo) (
+    cl_int  (CL_API_CALL *clGetDeviceInfo) (
                 cl_device_id device,
                 cl_device_info param_name,
                 size_t param_value_size,
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_context  (CLI_API_CALL *clCreateContext) (
+    cl_context  (CL_API_CALL *clCreateContext) (
                 const cl_context_properties* properties,
                 cl_uint num_devices,
                 const cl_device_id* devices,
@@ -66,39 +63,39 @@ struct CLdispatch
                 void* user_data,
                 cl_int* errcode_ret );
 
-    cl_context  (CLI_API_CALL *clCreateContextFromType) (
+    cl_context  (CL_API_CALL *clCreateContextFromType) (
                 const cl_context_properties* properties,
                 cl_device_type device_type,
                 void (CL_CALLBACK *pfn_notify)(const char *, const void *, size_t, void *),
                 void* user_data,
                 cl_int* errcode_ret );
 
-    cl_int  (CLI_API_CALL *clRetainContext) (
+    cl_int  (CL_API_CALL *clRetainContext) (
                 cl_context context );
 
-    cl_int  (CLI_API_CALL *clReleaseContext) (
+    cl_int  (CL_API_CALL *clReleaseContext) (
                 cl_context context );
 
-    cl_int  (CLI_API_CALL *clGetContextInfo) (
+    cl_int  (CL_API_CALL *clGetContextInfo) (
                 cl_context context,
                 cl_context_info param_name,
                 size_t param_value_size,
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_command_queue    (CLI_API_CALL *clCreateCommandQueue) (
+    cl_command_queue    (CL_API_CALL *clCreateCommandQueue) (
                 cl_context context,
                 cl_device_id device,
                 cl_command_queue_properties properties,
                 cl_int* errcode_ret );
 
-    cl_int  (CLI_API_CALL *clRetainCommandQueue) (
+    cl_int  (CL_API_CALL *clRetainCommandQueue) (
                 cl_command_queue command_queue );
 
-    cl_int  (CLI_API_CALL *clReleaseCommandQueue) (
+    cl_int  (CL_API_CALL *clReleaseCommandQueue) (
                 cl_command_queue command_queue );
 
-    cl_int  (CLI_API_CALL *clGetCommandQueueInfo) (
+    cl_int  (CL_API_CALL *clGetCommandQueueInfo) (
                 cl_command_queue command_queue,
                 cl_command_queue_info param_name,
                 size_t param_value_size,
@@ -106,13 +103,13 @@ struct CLdispatch
                 size_t* param_value_size_ret );
 
     // deprecated OpenCL 1.0
-    cl_int  (CLI_API_CALL *clSetCommandQueueProperty) (
+    cl_int  (CL_API_CALL *clSetCommandQueueProperty) (
                 cl_command_queue command_queue,
                 cl_command_queue_properties properties,
                 cl_bool enable,
                 cl_command_queue_properties* old_properties );
 
-    cl_mem  (CLI_API_CALL *clCreateBuffer) (
+    cl_mem  (CL_API_CALL *clCreateBuffer) (
                 cl_context context,
                 cl_mem_flags flags,
                 size_t size,
@@ -120,7 +117,7 @@ struct CLdispatch
                 cl_int* errcode_ret );
 
     // deprecated OpenCL 1.1
-    cl_mem  (CLI_API_CALL *clCreateImage2D) (
+    cl_mem  (CL_API_CALL *clCreateImage2D) (
                 cl_context context,
                 cl_mem_flags flags,
                 const cl_image_format* image_format,
@@ -131,7 +128,7 @@ struct CLdispatch
                 cl_int* errcode_ret );
 
     // deprecated OpenCL 1.1
-    cl_mem  (CLI_API_CALL *clCreateImage3D) (
+    cl_mem  (CL_API_CALL *clCreateImage3D) (
                 cl_context context,
                 cl_mem_flags flags,
                 const cl_image_format* image_format,
@@ -143,13 +140,13 @@ struct CLdispatch
                 void* host_ptr,
                 cl_int* errcode_ret );
 
-    cl_int  (CLI_API_CALL *clRetainMemObject) (
+    cl_int  (CL_API_CALL *clRetainMemObject) (
                 cl_mem memobj );
 
-    cl_int  (CLI_API_CALL *clReleaseMemObject) (
+    cl_int  (CL_API_CALL *clReleaseMemObject) (
                 cl_mem memobj );
 
-    cl_int  (CLI_API_CALL *clGetSupportedImageFormats) (
+    cl_int  (CL_API_CALL *clGetSupportedImageFormats) (
                 cl_context context,
                 cl_mem_flags flags,
                 cl_mem_object_type image_type,
@@ -157,48 +154,48 @@ struct CLdispatch
                 cl_image_format* image_formats,
                 cl_uint* num_image_formats );
 
-    cl_int  (CLI_API_CALL *clGetMemObjectInfo) (
+    cl_int  (CL_API_CALL *clGetMemObjectInfo) (
                 cl_mem memobj,
                 cl_mem_info param_name,
                 size_t param_value_size,
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_int  (CLI_API_CALL *clGetImageInfo) (
+    cl_int  (CL_API_CALL *clGetImageInfo) (
                 cl_mem image,
                 cl_image_info param_name,
                 size_t param_value_size,
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_sampler  (CLI_API_CALL *clCreateSampler) (
+    cl_sampler  (CL_API_CALL *clCreateSampler) (
                 cl_context context,
                 cl_bool normalized_coords,
                 cl_addressing_mode addressing_mode,
                 cl_filter_mode filter_mode,
                 cl_int* errcode_ret );
 
-    cl_int  (CLI_API_CALL *clRetainSampler) (
+    cl_int  (CL_API_CALL *clRetainSampler) (
                 cl_sampler sampler );
 
-    cl_int  (CLI_API_CALL *clReleaseSampler) (
+    cl_int  (CL_API_CALL *clReleaseSampler) (
                 cl_sampler sampler );
 
-    cl_int  (CLI_API_CALL *clGetSamplerInfo) (
+    cl_int  (CL_API_CALL *clGetSamplerInfo) (
                 cl_sampler sampler,
                 cl_sampler_info param_name,
                 size_t param_value_size,
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_program  (CLI_API_CALL *clCreateProgramWithSource) (
+    cl_program  (CL_API_CALL *clCreateProgramWithSource) (
                 cl_context context,
                 cl_uint count,
                 const char** strings,
                 const size_t* lengths,
                 cl_int* errcode_ret );
 
-    cl_program  (CLI_API_CALL *clCreateProgramWithBinary) (
+    cl_program  (CL_API_CALL *clCreateProgramWithBinary) (
                 cl_context context,
                 cl_uint num_devices,
                 const cl_device_id* device_list,
@@ -207,13 +204,13 @@ struct CLdispatch
                 cl_int* binary_status,
                 cl_int* errcode_ret );
 
-    cl_int  (CLI_API_CALL *clRetainProgram) (
+    cl_int  (CL_API_CALL *clRetainProgram) (
                 cl_program program );
 
-    cl_int  (CLI_API_CALL *clReleaseProgram) (
+    cl_int  (CL_API_CALL *clReleaseProgram) (
                 cl_program program );
 
-    cl_int  (CLI_API_CALL *clBuildProgram) (
+    cl_int  (CL_API_CALL *clBuildProgram) (
                 cl_program program,
                 cl_uint num_devices,
                 const cl_device_id* device_list,
@@ -222,16 +219,16 @@ struct CLdispatch
                 void* user_data );
 
     // deprecated OpenCL 1.1
-    cl_int  (CLI_API_CALL *clUnloadCompiler) ( void );
+    cl_int  (CL_API_CALL *clUnloadCompiler) ( void );
 
-    cl_int  (CLI_API_CALL *clGetProgramInfo) (
+    cl_int  (CL_API_CALL *clGetProgramInfo) (
                 cl_program program,
                 cl_program_info param_name,
                 size_t param_value_size,
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_int  (CLI_API_CALL *clGetProgramBuildInfo) (
+    cl_int  (CL_API_CALL *clGetProgramBuildInfo) (
                 cl_program program,
                 cl_device_id device,
                 cl_program_build_info param_name,
@@ -239,37 +236,37 @@ struct CLdispatch
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_kernel   (CLI_API_CALL *clCreateKernel) (
+    cl_kernel   (CL_API_CALL *clCreateKernel) (
                 cl_program program,
                 const char* kernel_name,
                 cl_int* errcode_ret );
 
-    cl_int  (CLI_API_CALL *clCreateKernelsInProgram) (
+    cl_int  (CL_API_CALL *clCreateKernelsInProgram) (
                 cl_program program,
                 cl_uint num_kernels,
                 cl_kernel* kernels,
                 cl_uint* num_kernels_ret );
 
-    cl_int  (CLI_API_CALL *clRetainKernel) (
+    cl_int  (CL_API_CALL *clRetainKernel) (
                 cl_kernel kernel );
 
-    cl_int  (CLI_API_CALL *clReleaseKernel) (
+    cl_int  (CL_API_CALL *clReleaseKernel) (
                 cl_kernel kernel );
 
-    cl_int  (CLI_API_CALL *clSetKernelArg) (
+    cl_int  (CL_API_CALL *clSetKernelArg) (
                 cl_kernel kernel,
                 cl_uint arg_index,
                 size_t arg_size,
                 const void* arg_value );
 
-    cl_int  (CLI_API_CALL *clGetKernelInfo) (
+    cl_int  (CL_API_CALL *clGetKernelInfo) (
                 cl_kernel kernel,
                 cl_kernel_info param_name,
                 size_t param_value_size,
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_int  (CLI_API_CALL *clGetKernelWorkGroupInfo) (
+    cl_int  (CL_API_CALL *clGetKernelWorkGroupInfo) (
                 cl_kernel kernel,
                 cl_device_id device,
                 cl_kernel_work_group_info param_name,
@@ -277,37 +274,37 @@ struct CLdispatch
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_int  (CLI_API_CALL *clWaitForEvents) (
+    cl_int  (CL_API_CALL *clWaitForEvents) (
                 cl_uint num_events,
                 const cl_event* event_list );
 
-    cl_int  (CLI_API_CALL *clGetEventInfo) (
+    cl_int  (CL_API_CALL *clGetEventInfo) (
                 cl_event event,
                 cl_event_info param_name,
                 size_t param_value_size,
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_int  (CLI_API_CALL *clRetainEvent) (
+    cl_int  (CL_API_CALL *clRetainEvent) (
                 cl_event event );
 
-    cl_int  (CLI_API_CALL *clReleaseEvent) (
+    cl_int  (CL_API_CALL *clReleaseEvent) (
                 cl_event event );
 
-    cl_int  (CLI_API_CALL *clGetEventProfilingInfo) (
+    cl_int  (CL_API_CALL *clGetEventProfilingInfo) (
                 cl_event event,
                 cl_profiling_info param_name,
                 size_t param_value_size,
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_int  (CLI_API_CALL *clFlush) (
+    cl_int  (CL_API_CALL *clFlush) (
                 cl_command_queue command_queue );
 
-    cl_int  (CLI_API_CALL *clFinish) (
+    cl_int  (CL_API_CALL *clFinish) (
                 cl_command_queue command_queue );
 
-    cl_int  (CLI_API_CALL *clEnqueueReadBuffer) (
+    cl_int  (CL_API_CALL *clEnqueueReadBuffer) (
                 cl_command_queue command_queue,
                 cl_mem buffer,
                 cl_bool blocking_read,
@@ -318,7 +315,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueWriteBuffer) (
+    cl_int  (CL_API_CALL *clEnqueueWriteBuffer) (
                 cl_command_queue command_queue,
                 cl_mem buffer,
                 cl_bool blocking_write,
@@ -329,7 +326,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueCopyBuffer) (
+    cl_int  (CL_API_CALL *clEnqueueCopyBuffer) (
                 cl_command_queue command_queue,
                 cl_mem src_buffer,
                 cl_mem dst_buffer,
@@ -340,7 +337,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueReadImage) (
+    cl_int  (CL_API_CALL *clEnqueueReadImage) (
                 cl_command_queue command_queue,
                 cl_mem image,
                 cl_bool blocking_read,
@@ -353,7 +350,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueWriteImage) (
+    cl_int  (CL_API_CALL *clEnqueueWriteImage) (
                 cl_command_queue command_queue,
                 cl_mem image,
                 cl_bool blocking_write,
@@ -366,7 +363,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueCopyImage) (
+    cl_int  (CL_API_CALL *clEnqueueCopyImage) (
                 cl_command_queue command_queue,
                 cl_mem src_image,
                 cl_mem dst_image,
@@ -377,7 +374,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueCopyImageToBuffer) (
+    cl_int  (CL_API_CALL *clEnqueueCopyImageToBuffer) (
                 cl_command_queue command_queue,
                 cl_mem src_image,
                 cl_mem dst_buffer,
@@ -388,7 +385,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueCopyBufferToImage) (
+    cl_int  (CL_API_CALL *clEnqueueCopyBufferToImage) (
                 cl_command_queue command_queue,
                 cl_mem src_buffer,
                 cl_mem dst_image,
@@ -399,7 +396,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    void*   (CLI_API_CALL *clEnqueueMapBuffer) (
+    void*   (CL_API_CALL *clEnqueueMapBuffer) (
                 cl_command_queue command_queue,
                 cl_mem buffer,
                 cl_bool blocking_map,
@@ -411,7 +408,7 @@ struct CLdispatch
                 cl_event* event,
                 cl_int* errcode_ret );
 
-    void*  (CLI_API_CALL *clEnqueueMapImage) (
+    void*  (CL_API_CALL *clEnqueueMapImage) (
                 cl_command_queue command_queue,
                 cl_mem image,
                 cl_bool blocking_map,
@@ -425,7 +422,7 @@ struct CLdispatch
                 cl_event* event,
                 cl_int* errcode_ret );
 
-    cl_int  (CLI_API_CALL *clEnqueueUnmapMemObject) (
+    cl_int  (CL_API_CALL *clEnqueueUnmapMemObject) (
                 cl_command_queue command_queue,
                 cl_mem memobj,
                 void* mapped_ptr,
@@ -433,7 +430,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueNDRangeKernel) (
+    cl_int  (CL_API_CALL *clEnqueueNDRangeKernel) (
                 cl_command_queue command_queue,
                 cl_kernel kernel,
                 cl_uint work_dim,
@@ -444,14 +441,14 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueTask) (
+    cl_int  (CL_API_CALL *clEnqueueTask) (
                 cl_command_queue command_queue,
                 cl_kernel kernel,
                 cl_uint num_events_in_wait_list,
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueNativeKernel) (
+    cl_int  (CL_API_CALL *clEnqueueNativeKernel) (
                 cl_command_queue command_queue,
                 void (CL_CALLBACK *user_func)(void *),
                 void* args,
@@ -464,22 +461,22 @@ struct CLdispatch
                 cl_event* event );
 
     // deprecated OpenCL 1.1
-    cl_int  (CLI_API_CALL *clEnqueueMarker) (
+    cl_int  (CL_API_CALL *clEnqueueMarker) (
                 cl_command_queue command_queue,
                 cl_event* event );
 
     // deprecated OpenCL 1.1
-    cl_int  (CLI_API_CALL *clEnqueueWaitForEvents) (
+    cl_int  (CL_API_CALL *clEnqueueWaitForEvents) (
                 cl_command_queue command_queue,
                 cl_uint num_events,
                 const cl_event* event_list );
 
     // deprecated OpenCL 1.1
-    cl_int  (CLI_API_CALL *clEnqueueBarrier) (
+    cl_int  (CL_API_CALL *clEnqueueBarrier) (
                 cl_command_queue command_queue );
 
     // deprecated OpenCL 1.2
-    void*   (CLI_API_CALL *clGetExtensionFunctionAddress) (
+    void*   (CL_API_CALL *clGetExtensionFunctionAddress) (
                 const char* func_name );
 
     // clGetGLContextInfoKHR is a special-case.
@@ -489,7 +486,7 @@ struct CLdispatch
     // dispatch table.  This means that we can install it into our core API
     // dispatch table as well, and don't need to look it up per-platform.
 
-    cl_int  (CLI_API_CALL *clGetGLContextInfoKHR) (
+    cl_int  (CL_API_CALL *clGetGLContextInfoKHR) (
                 const cl_context_properties *properties,
                 cl_gl_context_info param_name,
                 size_t param_value_size,
@@ -498,33 +495,33 @@ struct CLdispatch
 
     // OpenCL 1.1
 
-    cl_int  (CLI_API_CALL *clSetEventCallback) (
+    cl_int  (CL_API_CALL *clSetEventCallback) (
                 cl_event event,
                 cl_int command_exec_callback_type,
                 void (CL_CALLBACK *pfn_notify)( cl_event, cl_int, void * ),
                 void *user_data );
 
-    cl_mem  (CLI_API_CALL *clCreateSubBuffer) (
+    cl_mem  (CL_API_CALL *clCreateSubBuffer) (
                 cl_mem buffer,
                 cl_mem_flags flags,
                 cl_buffer_create_type buffer_create_type,
                 const void *buffer_create_info,
                 cl_int *errcode_ret );
 
-    cl_int  (CLI_API_CALL *clSetMemObjectDestructorCallback) (
+    cl_int  (CL_API_CALL *clSetMemObjectDestructorCallback) (
                 cl_mem memobj,
                 void (CL_CALLBACK *pfn_notify)( cl_mem, void* ),
                 void *user_data );
 
-    cl_event (CLI_API_CALL *clCreateUserEvent) (
+    cl_event (CL_API_CALL *clCreateUserEvent) (
                 cl_context context,
                 cl_int *errcode_ret );
 
-    cl_int  (CLI_API_CALL *clSetUserEventStatus) (
+    cl_int  (CL_API_CALL *clSetUserEventStatus) (
                 cl_event event,
                 cl_int execution_status );
 
-    cl_int  (CLI_API_CALL *clEnqueueReadBufferRect) (
+    cl_int  (CL_API_CALL *clEnqueueReadBufferRect) (
                 cl_command_queue command_queue,
                 cl_mem buffer,
                 cl_bool blocking_read,
@@ -540,7 +537,7 @@ struct CLdispatch
                 const cl_event *event_wait_list,
                 cl_event *event );
 
-    cl_int  (CLI_API_CALL *clEnqueueWriteBufferRect) (
+    cl_int  (CL_API_CALL *clEnqueueWriteBufferRect) (
                 cl_command_queue command_queue,
                 cl_mem buffer,
                 cl_bool blocking_write,
@@ -556,7 +553,7 @@ struct CLdispatch
                 const cl_event *event_wait_list,
                 cl_event *event );
 
-    cl_int  (CLI_API_CALL *clEnqueueCopyBufferRect) (
+    cl_int  (CL_API_CALL *clEnqueueCopyBufferRect) (
                 cl_command_queue command_queue,
                 cl_mem src_buffer,
                 cl_mem dst_buffer,
@@ -573,20 +570,20 @@ struct CLdispatch
 
     // OpenCL 1.2
 
-    cl_int  (CLI_API_CALL *clCreateSubDevices) (
+    cl_int  (CL_API_CALL *clCreateSubDevices) (
                 cl_device_id in_device,
                 const cl_device_partition_property* properties,
                 cl_uint num_devices,
                 cl_device_id* out_devices,
                 cl_uint* num_devices_ret );
 
-    cl_int  (CLI_API_CALL *clRetainDevice) (
+    cl_int  (CL_API_CALL *clRetainDevice) (
                 cl_device_id device );
 
-    cl_int  (CLI_API_CALL *clReleaseDevice) (
+    cl_int  (CL_API_CALL *clReleaseDevice) (
                 cl_device_id device );
 
-    cl_mem  (CLI_API_CALL *clCreateImage) (
+    cl_mem  (CL_API_CALL *clCreateImage) (
                 cl_context context,
                 cl_mem_flags flags,
                 const cl_image_format* image_format,
@@ -594,14 +591,14 @@ struct CLdispatch
                 void* host_ptr,
                 cl_int* errcode_ret );
 
-    cl_program  (CLI_API_CALL *clCreateProgramWithBuiltInKernels) (
+    cl_program  (CL_API_CALL *clCreateProgramWithBuiltInKernels) (
                 cl_context context,
                 cl_uint num_devices,
                 const cl_device_id* device_list,
                 const char* kernel_names,
                 cl_int* errcode_ret);
 
-    cl_int  (CLI_API_CALL *clCompileProgram) (
+    cl_int  (CL_API_CALL *clCompileProgram) (
                 cl_program program,
                 cl_uint num_devices,
                 const cl_device_id* device_list,
@@ -612,7 +609,7 @@ struct CLdispatch
                 void (CL_CALLBACK *pfn_notify)(cl_program program , void* user_data),
                 void* user_data );
 
-    cl_program  (CLI_API_CALL *clLinkProgram) (
+    cl_program  (CL_API_CALL *clLinkProgram) (
                 cl_context context,
                 cl_uint num_devices,
                 const cl_device_id* device_list,
@@ -623,10 +620,10 @@ struct CLdispatch
                 void* user_data,
                 cl_int* errcode_ret );
 
-    cl_int  (CLI_API_CALL *clUnloadPlatformCompiler) (
+    cl_int  (CL_API_CALL *clUnloadPlatformCompiler) (
                 cl_platform_id platform );
 
-    cl_int  (CLI_API_CALL *clGetKernelArgInfo) (
+    cl_int  (CL_API_CALL *clGetKernelArgInfo) (
                 cl_kernel kernel,
                 cl_uint arg_indx,
                 cl_kernel_arg_info param_name,
@@ -634,7 +631,7 @@ struct CLdispatch
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_int  (CLI_API_CALL *clEnqueueFillBuffer) (
+    cl_int  (CL_API_CALL *clEnqueueFillBuffer) (
                 cl_command_queue command_queue,
                 cl_mem buffer,
                 const void* pattern,
@@ -645,7 +642,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueFillImage) (
+    cl_int  (CL_API_CALL *clEnqueueFillImage) (
                 cl_command_queue command_queue,
                 cl_mem image,
                 const void* fill_color,
@@ -655,7 +652,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueMigrateMemObjects) (
+    cl_int  (CL_API_CALL *clEnqueueMigrateMemObjects) (
                 cl_command_queue command_queue,
                 cl_uint num_mem_objects,
                 const cl_mem* mem_objects,
@@ -664,31 +661,31 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueMarkerWithWaitList) (
+    cl_int  (CL_API_CALL *clEnqueueMarkerWithWaitList) (
                 cl_command_queue command_queue,
                 cl_uint num_events_in_wait_list,
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int  (CLI_API_CALL *clEnqueueBarrierWithWaitList) (
+    cl_int  (CL_API_CALL *clEnqueueBarrierWithWaitList) (
                 cl_command_queue command_queue,
                 cl_uint num_events_in_wait_list,
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    void*   (CLI_API_CALL *clGetExtensionFunctionAddressForPlatform)(
+    void*   (CL_API_CALL *clGetExtensionFunctionAddressForPlatform)(
                 cl_platform_id platform,
                 const char* func_name );
 
     // OpenCL 2.0
 
-    cl_command_queue (CLI_API_CALL *clCreateCommandQueueWithProperties) (
+    cl_command_queue (CL_API_CALL *clCreateCommandQueueWithProperties) (
                 cl_context context,
                 cl_device_id device,
                 const cl_queue_properties* properties,
                 cl_int* errcode_ret);
 
-    cl_mem (CLI_API_CALL *clCreatePipe) (
+    cl_mem (CL_API_CALL *clCreatePipe) (
                 cl_context context,
                 cl_mem_flags flags,
                 cl_uint pipe_packet_size,
@@ -696,24 +693,24 @@ struct CLdispatch
                 const cl_pipe_properties* properties,
                 cl_int* errcode_ret);
 
-    cl_int (CLI_API_CALL *clGetPipeInfo) (
+    cl_int (CL_API_CALL *clGetPipeInfo) (
                 cl_mem pipe,
                 cl_pipe_info param_name,
                 size_t param_value_size,
                 void* param_value,
                 size_t* param_value_size_ret);
 
-    void* (CLI_API_CALL *clSVMAlloc) (
+    void* (CL_API_CALL *clSVMAlloc) (
                 cl_context context,
                 cl_svm_mem_flags flags,
                 size_t size,
                 cl_uint alignment);
 
-    void (CLI_API_CALL *clSVMFree) (
+    void (CL_API_CALL *clSVMFree) (
                 cl_context context,
                 void* svm_pointer);
 
-    cl_int (CLI_API_CALL *clEnqueueSVMFree) (
+    cl_int (CL_API_CALL *clEnqueueSVMFree) (
                 cl_command_queue command_queue,
                 cl_uint num_svm_pointers,
                 void* svm_pointers [],
@@ -727,7 +724,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event);
 
-    cl_int (CLI_API_CALL *clEnqueueSVMMemcpy) (
+    cl_int (CL_API_CALL *clEnqueueSVMMemcpy) (
                 cl_command_queue command_queue,
                 cl_bool blocking_copy,
                 void* dst_ptr,
@@ -737,7 +734,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event);
 
-    cl_int (CLI_API_CALL *clEnqueueSVMMemFill) (
+    cl_int (CL_API_CALL *clEnqueueSVMMemFill) (
                 cl_command_queue command_queue,
                 void* svm_ptr,
                 const void* pattern,
@@ -747,7 +744,7 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event);
 
-    cl_int (CLI_API_CALL *clEnqueueSVMMap) (
+    cl_int (CL_API_CALL *clEnqueueSVMMap) (
                 cl_command_queue command_queue,
                 cl_bool blocking_map,
                 cl_map_flags map_flags,
@@ -757,24 +754,24 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event);
 
-    cl_int (CLI_API_CALL *clEnqueueSVMUnmap) (
+    cl_int (CL_API_CALL *clEnqueueSVMUnmap) (
                 cl_command_queue command_queue,
                 void* svm_ptr,
                 cl_uint num_events_in_wait_list,
                 const cl_event* event_wait_list,
                 cl_event* event);
 
-    cl_sampler (CLI_API_CALL *clCreateSamplerWithProperties) (
+    cl_sampler (CL_API_CALL *clCreateSamplerWithProperties) (
                 cl_context context,
                 const cl_sampler_properties* sampler_properties,
                 cl_int* errcode_ret);
 
-    cl_int (CLI_API_CALL *clSetKernelArgSVMPointer) (
+    cl_int (CL_API_CALL *clSetKernelArgSVMPointer) (
                 cl_kernel kernel,
                 cl_uint arg_index,
                 const void* arg_value);
 
-    cl_int (CLI_API_CALL *clSetKernelExecInfo) (
+    cl_int (CL_API_CALL *clSetKernelExecInfo) (
                 cl_kernel kernel,
                 cl_kernel_exec_info param_name,
                 size_t param_value_size,
@@ -782,17 +779,17 @@ struct CLdispatch
 
     // OpenCL 2.1
 
-    cl_kernel (CLI_API_CALL *clCloneKernel) (
+    cl_kernel (CL_API_CALL *clCloneKernel) (
                 cl_kernel source_kernel,
                 cl_int* errcode_ret );
 
-    cl_program (CLI_API_CALL *clCreateProgramWithIL) (
+    cl_program (CL_API_CALL *clCreateProgramWithIL) (
                 cl_context context,
                 const void *il,
                 size_t length,
                 cl_int *errcode_ret);
 
-    cl_int (CLI_API_CALL *clEnqueueSVMMigrateMem) (
+    cl_int (CL_API_CALL *clEnqueueSVMMigrateMem) (
                 cl_command_queue command_queue,
                 cl_uint num_svm_pointers,
                 const void** svm_pointers,
@@ -802,16 +799,16 @@ struct CLdispatch
                 const cl_event* event_wait_list,
                 cl_event* event );
 
-    cl_int (CLI_API_CALL *clGetDeviceAndHostTimer) (
+    cl_int (CL_API_CALL *clGetDeviceAndHostTimer) (
                 cl_device_id device,
                 cl_ulong* device_timestamp,
                 cl_ulong* host_timestamp );
 
-    cl_int (CLI_API_CALL *clGetHostTimer) (
+    cl_int (CL_API_CALL *clGetHostTimer) (
                 cl_device_id device,
                 cl_ulong* host_timestamp );
 
-    cl_int (CLI_API_CALL *clGetKernelSubGroupInfo) (
+    cl_int (CL_API_CALL *clGetKernelSubGroupInfo) (
                 cl_kernel kernel,
                 cl_device_id device,
                 cl_kernel_sub_group_info param_name,
@@ -821,19 +818,19 @@ struct CLdispatch
                 void* param_value,
                 size_t* param_value_size_ret );
 
-    cl_int (CLI_API_CALL *clSetDefaultDeviceCommandQueue) (
+    cl_int (CL_API_CALL *clSetDefaultDeviceCommandQueue) (
                 cl_context context,
                 cl_device_id device,
                 cl_command_queue command_queue );
 
     // OpenCL 2.2
 
-    cl_int  (CLI_API_CALL *clSetProgramReleaseCallback) (
+    cl_int  (CL_API_CALL *clSetProgramReleaseCallback) (
                 cl_program program,
                 void (CL_CALLBACK *pfn_notify)(cl_program program, void* user_data),
                 void* user_data );
 
-    cl_int  (CLI_API_CALL *clSetProgramSpecializationConstant) (
+    cl_int  (CL_API_CALL *clSetProgramSpecializationConstant) (
                 cl_program program,
                 cl_uint spec_id,
                 size_t spec_size,
@@ -841,7 +838,7 @@ struct CLdispatch
 
     // OpenCL 3.0
 
-    cl_mem (CLI_API_CALL *clCreateBufferWithProperties) (
+    cl_mem (CL_API_CALL *clCreateBufferWithProperties) (
                 cl_context context,
                 const cl_mem_properties* properties,
                 cl_mem_flags flags,
@@ -849,7 +846,7 @@ struct CLdispatch
                 void* host_ptr,
                 cl_int* errcode_ret);
 
-    cl_mem (CLI_API_CALL *clCreateImageWithProperties) (
+    cl_mem (CL_API_CALL *clCreateImageWithProperties) (
                 cl_context context,
                 const cl_mem_properties* properties,
                 cl_mem_flags flags,
@@ -869,13 +866,13 @@ struct CLdispatch
 struct CLdispatchX
 {
     // cl_khr_gl_event
-    cl_event    (CLI_API_CALL *clCreateEventFromGLsyncKHR) (
+    cl_event    (CL_API_CALL *clCreateEventFromGLsyncKHR) (
                 cl_context context,
                 cl_GLsync sync,
                 cl_int* errcode_ret);
 
     // cl_khr_gl_sharing
-    cl_mem  (CLI_API_CALL *clCreateFromGLBuffer) (
+    cl_mem  (CL_API_CALL *clCreateFromGLBuffer) (
                 cl_context context,
                 cl_mem_flags flags,
                 cl_GLuint bufobj,
@@ -883,7 +880,7 @@ struct CLdispatchX
 
     // cl_khr_gl_sharing
     // deprecated OpenCL 1.1
-    cl_mem  (CLI_API_CALL *clCreateFromGLTexture2D) (
+    cl_mem  (CL_API_CALL *clCreateFromGLTexture2D) (
                 cl_context context,
                 cl_mem_flags flags,
                 cl_GLenum target,
@@ -893,7 +890,7 @@ struct CLdispatchX
 
     // cl_khr_gl_sharing
     // deprecated OpenCL 1.1
-    cl_mem  (CLI_API_CALL *clCreateFromGLTexture3D) (
+    cl_mem  (CL_API_CALL *clCreateFromGLTexture3D) (
                 cl_context context,
                 cl_mem_flags flags,
                 cl_GLenum target,
@@ -903,7 +900,7 @@ struct CLdispatchX
 
     // cl_khr_gl_sharing
     // OpenCL 1.2
-    cl_mem  (CLI_API_CALL *clCreateFromGLTexture) (
+    cl_mem  (CL_API_CALL *clCreateFromGLTexture) (
                 cl_context context,
                 cl_mem_flags flags,
                 cl_GLenum target,
@@ -912,20 +909,20 @@ struct CLdispatchX
                 cl_int* errcode_ret );
 
     // cl_khr_gl_sharing
-    cl_mem  (CLI_API_CALL *clCreateFromGLRenderbuffer) (
+    cl_mem  (CL_API_CALL *clCreateFromGLRenderbuffer) (
                 cl_context context,
                 cl_mem_flags flags,
                 cl_GLuint renderbuffer,
                 cl_int* errcode_ret);
 
     // cl_khr_gl_sharing
-    cl_int  (CLI_API_CALL *clGetGLObjectInfo) (
+    cl_int  (CL_API_CALL *clGetGLObjectInfo) (
                 cl_mem memobj,
                 cl_gl_object_type* gl_object_type,
                 cl_GLuint* gl_object_name);
 
     // cl_khr_gl_sharing
-    cl_int  (CLI_API_CALL *clGetGLTextureInfo) (
+    cl_int  (CL_API_CALL *clGetGLTextureInfo) (
                 cl_mem memobj,
                 cl_gl_texture_info param_name,
                 size_t param_value_size,
@@ -933,7 +930,7 @@ struct CLdispatchX
                 size_t* param_value_size_ret);
 
     // cl_khr_gl_sharing
-    cl_int  (CLI_API_CALL *clEnqueueAcquireGLObjects) (
+    cl_int  (CL_API_CALL *clEnqueueAcquireGLObjects) (
                 cl_command_queue command_queue,
                 cl_uint num_objects,
                 const cl_mem* mem_objects,
@@ -942,7 +939,7 @@ struct CLdispatchX
                 cl_event* event);
 
     // cl_khr_gl_sharing
-    cl_int  (CLI_API_CALL *clEnqueueReleaseGLObjects) (
+    cl_int  (CL_API_CALL *clEnqueueReleaseGLObjects) (
                 cl_command_queue command_queue,
                 cl_uint num_objects,
                 const cl_mem* mem_objects,
@@ -952,7 +949,7 @@ struct CLdispatchX
 
 #if defined(_WIN32)
     // cl_khr_d3d10_sharing
-    cl_int  (CLI_API_CALL *clGetDeviceIDsFromD3D10KHR) (
+    cl_int  (CL_API_CALL *clGetDeviceIDsFromD3D10KHR) (
                 cl_platform_id platform,
                 cl_d3d10_device_source_khr d3d_device_source,
                 void* d3d_object,
@@ -962,14 +959,14 @@ struct CLdispatchX
                 cl_uint* num_devices);
 
     // cl_khr_d3d10_sharing
-    cl_mem  (CLI_API_CALL *clCreateFromD3D10BufferKHR) (
+    cl_mem  (CL_API_CALL *clCreateFromD3D10BufferKHR) (
                 cl_context context,
                 cl_mem_flags flags,
                 ID3D10Buffer* resource,
                 cl_int* errcode_ret);
 
     // cl_khr_d3d10_sharing
-    cl_mem  (CLI_API_CALL *clCreateFromD3D10Texture2DKHR) (
+    cl_mem  (CL_API_CALL *clCreateFromD3D10Texture2DKHR) (
                 cl_context context,
                 cl_mem_flags flags,
                 ID3D10Texture2D* resource,
@@ -977,7 +974,7 @@ struct CLdispatchX
                 cl_int* errcode_ret);
 
     // cl_khr_d3d10_sharing
-    cl_mem  (CLI_API_CALL *clCreateFromD3D10Texture3DKHR) (
+    cl_mem  (CL_API_CALL *clCreateFromD3D10Texture3DKHR) (
                 cl_context context,
                 cl_mem_flags flags,
                 ID3D10Texture3D* resource,
@@ -985,7 +982,7 @@ struct CLdispatchX
                 cl_int* errcode_ret);
 
     // cl_khr_d3d10_sharing
-    cl_int  (CLI_API_CALL *clEnqueueAcquireD3D10ObjectsKHR) (
+    cl_int  (CL_API_CALL *clEnqueueAcquireD3D10ObjectsKHR) (
                 cl_command_queue command_queue,
                 cl_uint num_objects,
                 const cl_mem* mem_objects,
@@ -994,7 +991,7 @@ struct CLdispatchX
                 cl_event* event);
 
     // cl_khr_d3d10_sharing
-    cl_int  (CLI_API_CALL *clEnqueueReleaseD3D10ObjectsKHR) (
+    cl_int  (CL_API_CALL *clEnqueueReleaseD3D10ObjectsKHR) (
                 cl_command_queue command_queue,
                 cl_uint num_objects,
                 const cl_mem* mem_objects,
@@ -1003,7 +1000,7 @@ struct CLdispatchX
                 cl_event* event);
 
     // cl_khr_d3d11_sharing
-    cl_int  (CLI_API_CALL *clGetDeviceIDsFromD3D11KHR) (
+    cl_int  (CL_API_CALL *clGetDeviceIDsFromD3D11KHR) (
                 cl_platform_id platform,
                 cl_d3d11_device_source_khr d3d_device_source,
                 void* d3d_object,
@@ -1013,14 +1010,14 @@ struct CLdispatchX
                 cl_uint* num_devices);
 
     // cl_khr_d3d11_sharing
-    cl_mem  (CLI_API_CALL *clCreateFromD3D11BufferKHR) (
+    cl_mem  (CL_API_CALL *clCreateFromD3D11BufferKHR) (
                 cl_context context,
                 cl_mem_flags flags,
                 ID3D11Buffer* resource,
                 cl_int* errcode_ret);
 
     // cl_khr_d3d11_sharing
-    cl_mem  (CLI_API_CALL *clCreateFromD3D11Texture2DKHR) (
+    cl_mem  (CL_API_CALL *clCreateFromD3D11Texture2DKHR) (
                 cl_context context,
                 cl_mem_flags flags,
                 ID3D11Texture2D* resource,
@@ -1028,7 +1025,7 @@ struct CLdispatchX
                 cl_int* errcode_ret);
 
     // cl_khr_d3d11_sharing
-    cl_mem  (CLI_API_CALL *clCreateFromD3D11Texture3DKHR) (
+    cl_mem  (CL_API_CALL *clCreateFromD3D11Texture3DKHR) (
                 cl_context context,
                 cl_mem_flags flags,
                 ID3D11Texture3D* resource,
@@ -1036,7 +1033,7 @@ struct CLdispatchX
                 cl_int* errcode_ret);
 
     // cl_khr_d3d11_sharing
-    cl_int  (CLI_API_CALL *clEnqueueAcquireD3D11ObjectsKHR) (
+    cl_int  (CL_API_CALL *clEnqueueAcquireD3D11ObjectsKHR) (
                 cl_command_queue command_queue,
                 cl_uint num_objects,
                 const cl_mem* mem_objects,
@@ -1045,7 +1042,7 @@ struct CLdispatchX
                 cl_event* event);
 
     // cl_khr_d3d11_sharing
-    cl_int  (CLI_API_CALL *clEnqueueReleaseD3D11ObjectsKHR) (
+    cl_int  (CL_API_CALL *clEnqueueReleaseD3D11ObjectsKHR) (
                 cl_command_queue command_queue,
                 cl_uint num_objects,
                 const cl_mem* mem_objects,
@@ -1054,7 +1051,7 @@ struct CLdispatchX
                 cl_event* event);
 
     // cl_khr_dx9_media_sharing
-    cl_int  (CLI_API_CALL *clGetDeviceIDsFromDX9MediaAdapterKHR) (
+    cl_int  (CL_API_CALL *clGetDeviceIDsFromDX9MediaAdapterKHR) (
                 cl_platform_id platform,
                 cl_uint num_media_adapters,
                 cl_dx9_media_adapter_type_khr* media_adapters_type,
@@ -1065,7 +1062,7 @@ struct CLdispatchX
                 cl_uint* num_devices);
 
     // cl_khr_dx9_media_sharing
-    cl_mem  (CLI_API_CALL *clCreateFromDX9MediaSurfaceKHR) (
+    cl_mem  (CL_API_CALL *clCreateFromDX9MediaSurfaceKHR) (
                 cl_context context,
                 cl_mem_flags flags,
                 cl_dx9_media_adapter_type_khr adapter_type,
@@ -1074,7 +1071,7 @@ struct CLdispatchX
                 cl_int* errcode_ret);
 
     // cl_khr_dx9_media_sharing
-    cl_int  (CLI_API_CALL *clEnqueueAcquireDX9MediaSurfacesKHR) (
+    cl_int  (CL_API_CALL *clEnqueueAcquireDX9MediaSurfacesKHR) (
                 cl_command_queue command_queue,
                 cl_uint num_objects,
                 const cl_mem* mem_objects,
@@ -1083,7 +1080,7 @@ struct CLdispatchX
                 cl_event* event);
 
     // cl_khr_dx9_media_sharing
-    cl_int  (CLI_API_CALL *clEnqueueReleaseDX9MediaSurfacesKHR) (
+    cl_int  (CL_API_CALL *clEnqueueReleaseDX9MediaSurfacesKHR) (
                 cl_command_queue command_queue,
                 cl_uint num_objects,
                 const cl_mem* mem_objects,
@@ -1093,14 +1090,14 @@ struct CLdispatchX
 #endif
 
     // cl_khr_il_program
-    cl_program (CLI_API_CALL *clCreateProgramWithILKHR) (
+    cl_program (CL_API_CALL *clCreateProgramWithILKHR) (
                 cl_context context,
                 const void *il,
                 size_t length,
                 cl_int *errcode_ret);
 
     // cl_khr_subgroups
-    cl_int  (CLI_API_CALL *clGetKernelSubGroupInfoKHR) (
+    cl_int  (CL_API_CALL *clGetKernelSubGroupInfoKHR) (
                 cl_kernel kernel,
                 cl_device_id device,
                 cl_kernel_sub_group_info param_name,
@@ -1111,7 +1108,7 @@ struct CLdispatchX
                 size_t* param_value_size_ret);
 
     // cl_khr_create_command_queue
-    cl_command_queue    (CLI_API_CALL *clCreateCommandQueueWithPropertiesKHR) (
+    cl_command_queue    (CL_API_CALL *clCreateCommandQueueWithPropertiesKHR) (
             cl_context context,
             cl_device_id device,
             const cl_queue_properties_khr* properties,
@@ -1119,7 +1116,7 @@ struct CLdispatchX
 
 #if defined(_WIN32)
     // cl_intel_dx9_media_sharing
-    cl_int  (CLI_API_CALL *clGetDeviceIDsFromDX9INTEL) (
+    cl_int  (CL_API_CALL *clGetDeviceIDsFromDX9INTEL) (
                 cl_platform_id platform,
                 cl_dx9_device_source_intel d3d_device_source,
                 void *dx9_object,
@@ -1129,7 +1126,7 @@ struct CLdispatchX
                 cl_uint* num_devices );
 
     // cl_intel_dx9_media_sharing
-    cl_mem  (CLI_API_CALL *clCreateFromDX9MediaSurfaceINTEL) (
+    cl_mem  (CL_API_CALL *clCreateFromDX9MediaSurfaceINTEL) (
                 cl_context context,
                 cl_mem_flags flags,
                 IDirect3DSurface9* resource,
@@ -1138,7 +1135,7 @@ struct CLdispatchX
                 cl_int* errcode_ret );
 
     // cl_intel_dx9_media_sharing
-    cl_int  (CLI_API_CALL *clEnqueueAcquireDX9ObjectsINTEL) (
+    cl_int  (CL_API_CALL *clEnqueueAcquireDX9ObjectsINTEL) (
                 cl_command_queue command_queue,
                 cl_uint num_objects,
                 const cl_mem* mem_objects,
@@ -1147,7 +1144,7 @@ struct CLdispatchX
                 cl_event* event );
 
     // cl_intel_dx9_media_sharing
-    cl_int  (CLI_API_CALL *clEnqueueReleaseDX9ObjectsINTEL) (
+    cl_int  (CL_API_CALL *clEnqueueReleaseDX9ObjectsINTEL) (
                 cl_command_queue command_queue,
                 cl_uint num_objects,
                 const cl_mem* mem_objects,
@@ -1157,7 +1154,7 @@ struct CLdispatchX
 #endif
 
     // Unofficial MDAPI extension:
-    cl_command_queue    (CLI_API_CALL *clCreatePerfCountersCommandQueueINTEL) (
+    cl_command_queue    (CL_API_CALL *clCreatePerfCountersCommandQueueINTEL) (
                 cl_context context,
                 cl_device_id device,
                 cl_command_queue_properties properties,
@@ -1165,14 +1162,14 @@ struct CLdispatchX
                 cl_int* errcode_ret);
 
     // Unofficial MDAPI extension:
-    cl_int (CLI_API_CALL *clSetPerformanceConfigurationINTEL)(
+    cl_int (CL_API_CALL *clSetPerformanceConfigurationINTEL)(
         cl_device_id    device,
         cl_uint         count,
         cl_uint*        offsets,
         cl_uint*        values );
 
     // cl_intel_accelerator
-    cl_accelerator_intel (CLI_API_CALL *clCreateAcceleratorINTEL) (
+    cl_accelerator_intel (CL_API_CALL *clCreateAcceleratorINTEL) (
         cl_context context,
         cl_accelerator_type_intel accelerator_type,
         size_t descriptor_size,
@@ -1180,7 +1177,7 @@ struct CLdispatchX
         cl_int* errcode_ret );
 
     // cl_intel_accelerator
-    cl_int (CLI_API_CALL *clGetAcceleratorInfoINTEL) (
+    cl_int (CL_API_CALL *clGetAcceleratorInfoINTEL) (
         cl_accelerator_intel accelerator,
         cl_accelerator_info_intel param_name,
         size_t param_value_size,
@@ -1188,15 +1185,15 @@ struct CLdispatchX
         size_t* param_value_size_ret );
 
     // cl_intel_accelerator
-    cl_int (CLI_API_CALL *clRetainAcceleratorINTEL) (
+    cl_int (CL_API_CALL *clRetainAcceleratorINTEL) (
         cl_accelerator_intel accelerator );
 
     // cl_intel_accelerator
-    cl_int (CLI_API_CALL *clReleaseAcceleratorINTEL) (
+    cl_int (CL_API_CALL *clReleaseAcceleratorINTEL) (
         cl_accelerator_intel accelerator );
 
     // cl_intel_va_api_media_sharing
-    cl_int (CLI_API_CALL *clGetDeviceIDsFromVA_APIMediaAdapterINTEL) (
+    cl_int (CL_API_CALL *clGetDeviceIDsFromVA_APIMediaAdapterINTEL) (
         cl_platform_id platform,
         cl_va_api_device_source_intel media_adapter_type,
         void *media_adapter,
@@ -1206,7 +1203,7 @@ struct CLdispatchX
         cl_uint *num_devices);
 
     // cl_intel_va_api_media_sharing
-    cl_mem (CLI_API_CALL *clCreateFromVA_APIMediaSurfaceINTEL) (
+    cl_mem (CL_API_CALL *clCreateFromVA_APIMediaSurfaceINTEL) (
         cl_context context,
         cl_mem_flags flags,
         VASurfaceID *surface,
@@ -1214,7 +1211,7 @@ struct CLdispatchX
         cl_int *errcode_ret);
 
     // cl_intel_va_api_media_sharing
-    cl_int (CLI_API_CALL *clEnqueueAcquireVA_APIMediaSurfacesINTEL) (
+    cl_int (CL_API_CALL *clEnqueueAcquireVA_APIMediaSurfacesINTEL) (
         cl_command_queue command_queue,
         cl_uint num_objects,
         const cl_mem *mem_objects,
@@ -1223,7 +1220,7 @@ struct CLdispatchX
         cl_event *event);
 
     // cl_intel_va_api_media_sharing
-    cl_int (CLI_API_CALL *clEnqueueReleaseVA_APIMediaSurfacesINTEL) (
+    cl_int (CL_API_CALL *clEnqueueReleaseVA_APIMediaSurfacesINTEL) (
         cl_command_queue command_queue,
         cl_uint num_objects,
         const cl_mem *mem_objects,
@@ -1232,7 +1229,7 @@ struct CLdispatchX
         cl_event *event);
 
     // cl_intel_unified_shared_memory
-    void* (CLI_API_CALL *clHostMemAllocINTEL) (
+    void* (CL_API_CALL *clHostMemAllocINTEL) (
         cl_context context,
         const cl_mem_properties_intel* properties,
         size_t size,
@@ -1240,7 +1237,7 @@ struct CLdispatchX
         cl_int* errcode_ret);
 
     // cl_intel_unified_shared_memory
-    void* (CLI_API_CALL *clDeviceMemAllocINTEL) (
+    void* (CL_API_CALL *clDeviceMemAllocINTEL) (
         cl_context context,
         cl_device_id device,
         const cl_mem_properties_intel* properties,
@@ -1249,7 +1246,7 @@ struct CLdispatchX
         cl_int* errcode_ret);
 
     // cl_intel_unified_shared_memory
-    void* (CLI_API_CALL *clSharedMemAllocINTEL) (
+    void* (CL_API_CALL *clSharedMemAllocINTEL) (
         cl_context context,
         cl_device_id device,
         const cl_mem_properties_intel* properties,
@@ -1258,17 +1255,17 @@ struct CLdispatchX
         cl_int* errcode_ret);
 
     // cl_intel_unified_shared_memory
-    cl_int (CLI_API_CALL *clMemFreeINTEL) (
+    cl_int (CL_API_CALL *clMemFreeINTEL) (
         cl_context context,
         void* ptr);
 
     // cl_intel_unified_shared_memory
-    cl_int (CLI_API_CALL *clMemBlockingFreeINTEL) (
+    cl_int (CL_API_CALL *clMemBlockingFreeINTEL) (
         cl_context context,
         void* ptr);
 
     // cl_intel_unified_shared_memory
-    cl_int (CLI_API_CALL *clGetMemAllocInfoINTEL) (
+    cl_int (CL_API_CALL *clGetMemAllocInfoINTEL) (
         cl_context context,
         const void* ptr,
         cl_mem_info_intel param_name,
@@ -1277,13 +1274,13 @@ struct CLdispatchX
         size_t* param_value_size_ret);
 
     // cl_intel_unified_shared_memory
-    cl_int (CLI_API_CALL *clSetKernelArgMemPointerINTEL) (
+    cl_int (CL_API_CALL *clSetKernelArgMemPointerINTEL) (
         cl_kernel kernel,
         cl_uint arg_index,
         const void* arg_value);
 
     // cl_intel_unified_shared_memory
-    cl_int (CLI_API_CALL *clEnqueueMemsetINTEL) (   // Deprecated
+    cl_int (CL_API_CALL *clEnqueueMemsetINTEL) (   // Deprecated
         cl_command_queue command_queue,
         void* dst_ptr,
         cl_int value,
@@ -1293,7 +1290,7 @@ struct CLdispatchX
         cl_event* event);
 
     // cl_intel_unified_shared_memory
-    cl_int (CLI_API_CALL *clEnqueueMemFillINTEL) (
+    cl_int (CL_API_CALL *clEnqueueMemFillINTEL) (
         cl_command_queue command_queue,
         void* dst_ptr,
         const void* pattern,
@@ -1304,7 +1301,7 @@ struct CLdispatchX
         cl_event* event);
 
     // cl_intel_unified_shared_memory
-    cl_int (CLI_API_CALL *clEnqueueMemcpyINTEL) (
+    cl_int (CL_API_CALL *clEnqueueMemcpyINTEL) (
         cl_command_queue command_queue,
         cl_bool blocking,
         void* dst_ptr,
@@ -1315,7 +1312,7 @@ struct CLdispatchX
         cl_event* event);
 
     // cl_intel_unified_shared_memory
-    cl_int (CLI_API_CALL *clEnqueueMigrateMemINTEL) (
+    cl_int (CL_API_CALL *clEnqueueMigrateMemINTEL) (
         cl_command_queue command_queue,
         const void* ptr,
         size_t size,
@@ -1325,7 +1322,7 @@ struct CLdispatchX
         cl_event* event);
 
     // cl_intel_unified_shared_memory
-    cl_int (CLI_API_CALL *clEnqueueMemAdviseINTEL) (
+    cl_int (CL_API_CALL *clEnqueueMemAdviseINTEL) (
         cl_command_queue command_queue,
         const void* ptr,
         size_t size,
