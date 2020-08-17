@@ -120,8 +120,12 @@ void CLIntercept::Delete( CLIntercept*& pIntercept )
 CLIntercept::CLIntercept( void* pGlobalData )
     : m_OS( pGlobalData )
 {
-    m_Dispatch = {0};
+    m_DispatchToLoader = {0};
+    m_Dispatch[NULL] = {0};
     m_DispatchX[NULL] = {0};
+
+    // TODO: Temporary!
+    m_InterceptedPlatform = NULL;
 
     m_OpenCLLibraryHandle = NULL;
 
@@ -178,7 +182,7 @@ CLIntercept::~CLIntercept()
     // OpenCL functions get called.  Note that this means we do potentially
     // leave some events, kernels, or programs un-released, but since
     // the process is terminating, that's probably OK.
-    m_Dispatch = {0};
+    m_DispatchToLoader = {0};
 
 #if defined(USE_MDAPI)
     if( m_pMDHelper )
@@ -1142,6 +1146,79 @@ void CLIntercept::callLoggingExit(
     callLoggingExit( str, errorCode, NULL );
 
     va_end( args );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+void CLIntercept::saveICDDispatch()
+{
+    if( m_Dispatch.size() <= 1 )    // we always have one entry for NULL
+    {
+        std::lock_guard<std::mutex> lock(m_Mutex);
+
+        if( m_Dispatch.size() <= 1 )
+        {
+            cl_int  errorCode = CL_SUCCESS;
+
+            std::vector< cl_platform_id > platforms;
+            cl_uint numPlatforms = 0;
+
+            if( errorCode == CL_SUCCESS )
+            {
+                errorCode = dispatchToLoader().clGetPlatformIDs(
+                    0,
+                    NULL,
+                    &numPlatforms );
+            }
+
+            if( errorCode == CL_SUCCESS && numPlatforms != 0 )
+            {
+                platforms.resize(numPlatforms);
+                errorCode = dispatchToLoader().clGetPlatformIDs(
+                    numPlatforms,
+                    platforms.data(),
+                    NULL );
+            }
+
+            if( errorCode == CL_SUCCESS && platforms.size() != 0 )
+            {
+                for( auto platform : platforms )
+                {
+                    if( platform->dispatch != NULL )
+                    {
+                        m_Dispatch[platform] = *platform->dispatch;
+                    }
+                }
+
+                // TODO: Delete!
+                if( platforms.size() == 1 )
+                {
+                    m_InterceptedPlatform = platforms[0];
+                }
+            }
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+void CLIntercept::interceptICDDispatch(
+    cl_uint numEntries,
+    cl_platform_id* platforms )
+{
+    std::lock_guard<std::mutex> lock(m_Mutex);
+
+    for( cl_uint p = 0; p < numEntries; p++ )
+    {
+        cl_platform_id  platform = platforms[p];
+
+        CLI_ASSERT( m_Dispatch.find(platform) != m_Dispatch.end() );
+        CLI_ASSERT( platform->dispatch != NULL );
+
+        platform->dispatch->clGetPlatformInfo = clGetPlatformInfo;
+        platform->dispatch->clGetDeviceIDs = clGetDeviceIDs;
+        platform->dispatch->clGetDeviceInfo = clGetDeviceInfo;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -10743,7 +10820,7 @@ void CLIntercept::SIMDSurveyNDRangeKernel(
             {                                                               \
                 func = dispatch().clGetExtensionFunctionAddress(#funcname); \
             }                                                               \
-            void** pfunc = (void**)( &m_Dispatch . funcname );              \
+            void** pfunc = (void**)( &m_DispatchToLoader . funcname );      \
             *pfunc = func;                                                  \
         }                                                                   \
         if( dispatch() . funcname )                                         \
@@ -11122,7 +11199,7 @@ void CLIntercept::logDeviceInfo( cl_device_id device )
     }                                                                       \
     else                                                                    \
     {                                                                       \
-        void** pfunc = (void**)( &m_Dispatch . funcname );                  \
+        void** pfunc = (void**)( &m_DispatchToLoader . funcname );          \
         *pfunc = func;                                                      \
     }                                                                       \
 }
@@ -11291,7 +11368,7 @@ bool CLIntercept::initDispatch( const std::string& libName )
 #elif defined(__APPLE__)
 #define INIT_CL_FUNC(funcname)                                              \
 {                                                                           \
-    m_Dispatch . funcname = funcname;                                       \
+    m_DispatchToLoader . funcname = funcname;                               \
 }
 bool CLIntercept::initDispatch( void )
 {

@@ -33,20 +33,25 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clGetPlatformIDs)(
 {
     CLIntercept*    pIntercept = GetIntercept();
 
-    if( pIntercept && pIntercept->dispatch().clGetPlatformIDs )
+    // This will always use the dispatch table into the loader!
+
+    if( pIntercept && pIntercept->dispatchToLoader().clGetPlatformIDs )
     {
+        SAVE_ICD_DISPATCH();
+
         LOG_CLINFO();
 
         CALL_LOGGING_ENTER();
         CPU_PERFORMANCE_TIMING_START();
 
-        cl_int  retVal = pIntercept->dispatch().clGetPlatformIDs(
+        cl_int  retVal = pIntercept->dispatchToLoader().clGetPlatformIDs(
             num_entries,
             platforms,
             num_platforms );
 
         CPU_PERFORMANCE_TIMING_END();
         CHECK_ERROR( retVal );
+        INTERCEPT_ICD_DISPATCH( retVal, num_entries, platforms );
         CALL_LOGGING_EXIT( retVal );
 
         return retVal;

@@ -27,6 +27,11 @@
 
 #include "CL/cl_icd.h"
 
+struct _cl_platform_id
+{
+    cl_icd_dispatch *dispatch;
+};
+
 // Dispatch table for extension APIs:
 
 struct CLdispatchX

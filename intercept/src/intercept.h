@@ -95,6 +95,11 @@ public:
                 const char* formatStr,
                 ... );
 
+    void    saveICDDispatch();
+    void    interceptICDDispatch(
+                cl_uint numEntries,
+                cl_platform_id* platforms );
+
     void    cacheDeviceInfo(
                 cl_device_id device );
     cl_int  getDeviceMajorMinorVersion(
@@ -648,6 +653,8 @@ public:
                 cl_int* errcode_ret );
 #endif
 
+    const cl_icd_dispatch&  dispatchToLoader() const;
+
     const cl_icd_dispatch&  dispatch() const;
 
     const CLdispatchX&  dispatchX( cl_accelerator_intel accelerator ) const;
@@ -815,13 +822,18 @@ private:
 
     std::mutex      m_Mutex;
 
+    typedef std::map< cl_platform_id, cl_icd_dispatch > CLdispatchMap;
     typedef std::map< cl_platform_id, CLdispatchX > CLdispatchXMap;
 
     OS::Services    m_OS;
-    cl_icd_dispatch m_Dispatch;
+    cl_icd_dispatch m_DispatchToLoader;
+    CLdispatchMap   m_Dispatch;
     CLdispatchXMap  m_DispatchX;
     CEnumNameMap    m_EnumNameMap;
     CObjectTracker  m_ObjectTracker;
+
+    // TODO: Temporary!
+    cl_platform_id  m_InterceptedPlatform;
 
     void*       m_OpenCLLibraryHandle;
 
@@ -1168,11 +1180,20 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+inline const cl_icd_dispatch& CLIntercept::dispatchToLoader() const
+{
+    return m_DispatchToLoader;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 inline const cl_icd_dispatch& CLIntercept::dispatch() const
 {
-    return m_Dispatch;
+    if( config().InterceptICDDispatch )
+    {
+        return m_Dispatch.at(m_InterceptedPlatform);
+    }
+    return m_DispatchToLoader;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1324,6 +1345,23 @@ inline cl_platform_id CLIntercept::getPlatform( cl_mem memobj ) const
         NULL);
     return getPlatform(context);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+//
+#define SAVE_ICD_DISPATCH()                                                 \
+    if( pIntercept->config().InterceptICDDispatch )                         \
+    {                                                                       \
+        pIntercept->saveICDDispatch();                                      \
+    }
+
+#define INTERCEPT_ICD_DISPATCH( errorCode, numEntries, platforms )          \
+    if( errorCode == CL_SUCCESS &&                                          \
+        pIntercept->config().InterceptICDDispatch )                         \
+    {                                                                       \
+        pIntercept->interceptICDDispatch(                                   \
+            numEntries,                                                     \
+            platforms );                                                    \
+    }
 
 ///////////////////////////////////////////////////////////////////////////////
 //
