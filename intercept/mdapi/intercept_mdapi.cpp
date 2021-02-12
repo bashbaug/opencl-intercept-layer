@@ -279,6 +279,8 @@ void CLIntercept::getMDAPICountersFromEvent(
     // We should only get here when event based sampling is enabled.
     CLI_ASSERT( config().DevicePerfCounterEventBasedSampling );
 
+    logf("Getting MDAPI counters from event %p.\n", event);
+
     if( m_pMDHelper )
     {
         const size_t reportSize = m_pMDHelper->GetQueryReportSize();

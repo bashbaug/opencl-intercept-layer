@@ -4908,6 +4908,8 @@ void CLIntercept::addTimingEvent(
 {
     std::lock_guard<std::mutex> lock(m_Mutex);
 
+    logf("Adding timing event %p.\n", event);
+
     m_EventList.emplace_back();
 
     SEventListNode& node = m_EventList.back();
@@ -5230,6 +5232,8 @@ void CLIntercept::checkTimingEvents()
         case CL_SUCCESS:
             if( eventStatus == CL_COMPLETE )
             {
+                logf("Getting info for timing event %p.\n", node.Event);
+
                 if( config().DevicePerformanceTiming ||
                     config().ITTPerformanceTiming ||
                     config().ChromePerformanceTiming )
