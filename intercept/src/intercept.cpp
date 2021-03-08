@@ -765,6 +765,10 @@ void CLIntercept::writeReport(
     {
         os << "*** WARNING *** NullEnqueue Enabled!" << std::endl << std::endl;
     }
+    if( config().DevicePerformanceTimingReleaseEvent == false )
+    {
+        os << "*** WARNING *** DevicePerformanceTimingReleaseEvent is Disabled!" << std::endl << std::endl;
+    }
 
     uint64_t    numEnqueues = m_EnqueueCounter - 1;
     if( numEnqueues > 0 )
@@ -5361,8 +5365,10 @@ void CLIntercept::checkTimingEvents()
                         node.Event );
                 }
 #endif
-
-                dispatch().clReleaseEvent( node.Event );
+                if( config().DevicePerformanceTimingReleaseEvent )
+                {
+                    dispatch().clReleaseEvent( node.Event );
+                }
 
                 m_EventList.erase( current );
             }
