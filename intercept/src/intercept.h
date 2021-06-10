@@ -762,6 +762,15 @@ public:
                 cl_event event,
                 clock::time_point queuedTime );
 
+    // cl_khr_suggested_local_work_size Emulation:
+    cl_int emulateGetKernelSuggestedLocalWorkSize(
+                cl_command_queue command_queue,
+                cl_kernel kernel,
+                cl_uint work_dim,
+                const size_t* global_work_offset,
+                const size_t* global_work_size,
+                size_t* suggested_local_work_size);
+
     // USM Emulation:
     void*   emulatedHostMemAlloc(
                 cl_context context,

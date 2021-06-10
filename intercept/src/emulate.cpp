@@ -26,6 +26,33 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// cl_khr_suggested_local_work_size
+cl_int CL_API_CALL clGetKernelSuggestedLocalWorkSizeKHR_EMU(
+    cl_command_queue command_queue,
+    cl_kernel kernel,
+    cl_uint work_dim,
+    const size_t* global_work_offset,
+    const size_t* global_work_size,
+    size_t* suggested_local_work_size)
+{
+    CLIntercept*    pIntercept = GetIntercept();
+
+    if( pIntercept && pIntercept->config().Emulate_cl_khr_suggested_local_work_size )
+    {
+        return pIntercept->emulateGetKernelSuggestedLocalWorkSize(
+            command_queue,
+            kernel,
+            work_dim,
+            global_work_offset,
+            global_work_size,
+            suggested_local_work_size );
+    }
+
+    return CL_INVALID_OPERATION;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // cl_intel_unified_shared_memory
 void* CL_API_CALL clHostMemAllocINTEL_EMU(
     cl_context context,

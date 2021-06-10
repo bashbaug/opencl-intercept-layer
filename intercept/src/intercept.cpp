@@ -9118,6 +9118,7 @@ bool CLIntercept::overrideGetDeviceInfo(
             override = true;
         }
         else if( m_Config.Emulate_cl_khr_extended_versioning ||
+                 m_Config.Emulate_cl_khr_suggested_local_work_size ||
                  m_Config.Emulate_cl_intel_unified_shared_memory )
         {
             std::string newExtensions;
@@ -9125,6 +9126,11 @@ bool CLIntercept::overrideGetDeviceInfo(
                 !checkDeviceForExtension( device, "cl_khr_extended_versioning") )
             {
                 newExtensions += "cl_khr_extended_versioning ";
+            }
+            if( m_Config.Emulate_cl_khr_suggested_local_work_size &&
+                !checkDeviceForExtension( device, "cl_khr_suggested_local_work_size") )
+            {
+                newExtensions += "cl_khr_suggested_local_work_size ";
             }
             if( m_Config.Emulate_cl_intel_unified_shared_memory &&
                 !checkDeviceForExtension( device, "cl_intel_unified_shared_memory") )
@@ -11105,10 +11111,20 @@ void* CLIntercept::getExtensionFunctionAddress(
 
     // cl_khr_il_program
     CHECK_RETURN_EXTENSION_FUNCTION( clCreateProgramWithILKHR );
+
     // cl_khr_subgroups
     CHECK_RETURN_EXTENSION_FUNCTION( clGetKernelSubGroupInfoKHR );
+
     // cl_khr_suggested_local_work_size
-    CHECK_RETURN_EXTENSION_FUNCTION( clGetKernelSuggestedLocalWorkSizeKHR );
+    if( m_Config.Emulate_cl_khr_suggested_local_work_size )
+    {
+        CHECK_RETURN_EXTENSION_FUNCTION_EMU( clGetKernelSuggestedLocalWorkSizeKHR );
+    }
+    else
+    {
+        CHECK_RETURN_EXTENSION_FUNCTION( clGetKernelSuggestedLocalWorkSizeKHR );
+    }
+
     // cl_khr_create_command_queue
     CHECK_RETURN_EXTENSION_FUNCTION( clCreateCommandQueueWithPropertiesKHR );
 
@@ -11141,6 +11157,7 @@ void* CLIntercept::getExtensionFunctionAddress(
     CHECK_RETURN_EXTENSION_FUNCTION( clEnqueueAcquireVA_APIMediaSurfacesINTEL );
     CHECK_RETURN_EXTENSION_FUNCTION( clEnqueueReleaseVA_APIMediaSurfacesINTEL );
 
+    // cl_intel_unified_shared_memory
     if( m_Config.Emulate_cl_intel_unified_shared_memory )
     {
         CHECK_RETURN_EXTENSION_FUNCTION_EMU( clHostMemAllocINTEL );
@@ -12541,6 +12558,43 @@ static bool validateUSMMemProperties(
     }
 
     return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+cl_int CLIntercept::emulateGetKernelSuggestedLocalWorkSize(
+    cl_command_queue command_queue,
+    cl_kernel kernel,
+    cl_uint work_dim,
+    const size_t* global_work_offset,
+    const size_t* global_work_size,
+    size_t* suggested_local_work_size)
+{
+    std::lock_guard<std::mutex> lock(m_Mutex);
+
+    cl_platform_id  platform = getPlatform(command_queue);
+
+    if( dispatchX(platform).clGetKernelSuggestedLocalWorkSizeINTEL == NULL )
+    {
+        getExtensionFunctionAddress(
+            platform,
+            "clGetKernelSuggestedLocalWorkSizeINTEL" );
+    }
+
+    auto dispatchX = this->dispatchX(platform);
+    if( dispatchX.clGetKernelSuggestedLocalWorkSizeINTEL )
+    {
+        size_t  emptyGWO[3] = { 0, 0, 0 };
+        return dispatchX.clGetKernelSuggestedLocalWorkSizeINTEL(
+            command_queue,
+            kernel,
+            work_dim,
+            global_work_offset == NULL ? emptyGWO : global_work_offset,
+            global_work_size,
+            suggested_local_work_size );
+    }
+
+    return CL_INVALID_OPERATION;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
