@@ -12727,8 +12727,22 @@ void CLIntercept::chromeTraceEvent(
     if( errorCode == CL_SUCCESS )
     {
         using ns = std::chrono::nanoseconds;
-        const uint64_t  normalizedQueuedTimeNS =
-            std::chrono::duration_cast<ns>(queuedTime - m_StartTime).count();
+        const cl_ulong  measuredQueuedTimeNS =
+            std::chrono::duration_cast<ns>(queuedTime.time_since_epoch()).count();
+
+        const auto  deltaNS =
+            measuredQueuedTimeNS > commandQueued ?
+            measuredQueuedTimeNS - commandQueued :
+            commandQueued - measuredQueuedTimeNS;
+        const int   thresholdNS = 500000;   // 0.5ms
+        const bool  corrected = deltaNS > thresholdNS;
+
+        const auto  startTimeNS =
+            std::chrono::duration_cast<ns>(m_StartTime.time_since_epoch()).count();
+        const auto  queuedTimeNS =
+            corrected ?
+            measuredQueuedTimeNS - startTimeNS :
+            commandQueued - startTimeNS;
 
         const uint64_t  processId = OS().GetProcessID();
 
@@ -12746,9 +12760,9 @@ void CLIntercept::chromeTraceEvent(
                 "(Execution)"
             };
             const uint64_t  usStarts[cNumStates] = {
-                normalizedQueuedTimeNS / 1000,
-                (commandSubmit - commandQueued + normalizedQueuedTimeNS) / 1000,
-                (commandStart - commandQueued + normalizedQueuedTimeNS) / 1000
+                (queuedTimeNS) / 1000,
+                (commandSubmit - commandQueued + queuedTimeNS) / 1000,
+                (commandStart - commandQueued + queuedTimeNS) / 1000
             };
             const uint64_t  usDeltas[cNumStates] = {
                 (commandSubmit - commandQueued) / 1000,
@@ -12768,6 +12782,7 @@ void CLIntercept::chromeTraceEvent(
                         << ", \"dur\":" << usDeltas[state]
                         << ", \"cname\":\"" << colours[state]
                         << "\", \"args\":{\"id\":" << enqueueCounter
+                        << ", \"corrected\":" << corrected
                         << "}},\n";
                 }
                 else
@@ -12780,6 +12795,7 @@ void CLIntercept::chromeTraceEvent(
                         << ", \"dur\":" << usDeltas[state]
                         << ", \"cname\":\"" << colours[state]
                         << "\", \"args\":{\"id\":" << enqueueCounter
+                        << ", \"corrected\":" << corrected
                         << "}},\n";
                 }
             }
@@ -12788,8 +12804,8 @@ void CLIntercept::chromeTraceEvent(
         else
         {
             const uint64_t  usStart =
-                (commandStart - commandQueued + normalizedQueuedTimeNS) / 1000;
-            const uint64_t  usDelta = ( commandEnd - commandStart ) / 1000;
+                (commandStart - commandQueued + queuedTimeNS) / 1000;
+            const uint64_t  usDelta = (commandEnd - commandStart) / 1000;
             if( m_Config.ChromePerformanceTimingPerKernel )
             {
                 m_InterceptTrace
@@ -12799,6 +12815,7 @@ void CLIntercept::chromeTraceEvent(
                     << "\", \"ts\":" << usStart
                     << ", \"dur\":" << usDelta
                     << ", \"args\":{\"id\":" << enqueueCounter
+                    << ", \"corrected\":" << corrected
                     << "}},\n";
             }
             else
@@ -12810,6 +12827,7 @@ void CLIntercept::chromeTraceEvent(
                     << "\", \"ts\":" << usStart
                     << ", \"dur\":" << usDelta
                     << ", \"args\":{\"id\":" << enqueueCounter
+                    << ", \"corrected\":" << corrected
                     << "}},\n";
             }
         }
