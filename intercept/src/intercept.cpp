@@ -5262,6 +5262,7 @@ void CLIntercept::addTimingEvent(
     const std::string& functionName,
     const uint64_t enqueueCounter,
     const clock::time_point queuedTime,
+    const clock::time_point queuedTimeEnd,
     const cl_kernel kernel,
     const cl_uint workDim,
     const size_t* gwo,
@@ -5293,6 +5294,7 @@ void CLIntercept::addTimingEvent(
     node.FunctionName = functionName;
     node.EnqueueCounter = enqueueCounter;
     node.QueuedTime = queuedTime;
+    node.QueuedTimeEnd = queuedTimeEnd;
     node.Kernel = kernel; // Note: no retain, so cannot count on this value...
     node.Event = event;
 
@@ -5734,7 +5736,8 @@ void CLIntercept::checkTimingEvents()
                         node.EnqueueCounter,
                         node.QueueNumber,
                         node.Event,
-                        node.QueuedTime );
+                        node.QueuedTime,
+                        node.QueuedTimeEnd );
                 }
 
 #if defined(USE_MDAPI)
@@ -12673,7 +12676,8 @@ void CLIntercept::chromeTraceEvent(
     uint64_t enqueueCounter,
     unsigned int queueNumber,
     cl_event event,
-    const clock::time_point queuedTime )
+    const clock::time_point queuedTime,
+    const clock::time_point queuedTimeEnd )
 {
     cl_int  errorCode = CL_SUCCESS;
 
@@ -12727,15 +12731,19 @@ void CLIntercept::chromeTraceEvent(
     if( errorCode == CL_SUCCESS )
     {
         using ns = std::chrono::nanoseconds;
-        const cl_ulong  measuredQueuedTimeNS =
+        const cl_ulong  queuedTimeStartNS =
             std::chrono::duration_cast<ns>(queuedTime.time_since_epoch()).count();
+        const cl_ulong  queuedTimeEndNS =
+            std::chrono::duration_cast<ns>(queuedTimeEnd.time_since_epoch()).count();
+        const cl_ulong  measuredQueuedTimeNS =
+            queuedTimeStartNS + ((queuedTimeEndNS - queuedTimeStartNS) / 2);
 
         const auto  deltaNS =
             measuredQueuedTimeNS > commandQueued ?
             measuredQueuedTimeNS - commandQueued :
             commandQueued - measuredQueuedTimeNS;
         const int   thresholdNS = 500000;   // 0.5ms
-        const bool  adjusted = deltaNS > thresholdNS;
+        const bool  adjusted = true; //deltaNS > thresholdNS;
 
         const auto  startTimeNS =
             std::chrono::duration_cast<ns>(m_StartTime.time_since_epoch()).count();
@@ -12744,10 +12752,13 @@ void CLIntercept::chromeTraceEvent(
             measuredQueuedTimeNS - startTimeNS :
             commandQueued - startTimeNS;
 
-        //logf("Queued (event): %llu, Queued (measured): %llu, Delta: %llu\n",
-        //    commandQueued,
-        //    measuredQueuedTimeNS,
-        //    deltaNS );
+        logf("Measured Start: %llu, Measured End: %llu, Measured Average: %llu, Event: %llu, Start End Delta: %llu, Average Event Delta: %llu\n",
+            queuedTimeStartNS,
+            queuedTimeEndNS,
+            measuredQueuedTimeNS,
+            commandQueued,
+            queuedTimeEndNS - queuedTimeStartNS,
+            deltaNS );
 
         const uint64_t  processId = OS().GetProcessID();
 
@@ -12787,7 +12798,6 @@ void CLIntercept::chromeTraceEvent(
                         << ", \"dur\":" << usDeltas[state]
                         << ", \"cname\":\"" << colours[state]
                         << "\", \"args\":{\"id\":" << enqueueCounter
-                        << ", \"adjusted\":" << adjusted
                         << "}},\n";
                 }
                 else
@@ -12800,7 +12810,6 @@ void CLIntercept::chromeTraceEvent(
                         << ", \"dur\":" << usDeltas[state]
                         << ", \"cname\":\"" << colours[state]
                         << "\", \"args\":{\"id\":" << enqueueCounter
-                        << ", \"adjusted\":" << adjusted
                         << "}},\n";
                 }
             }
@@ -12820,7 +12829,6 @@ void CLIntercept::chromeTraceEvent(
                     << "\", \"ts\":" << usStart
                     << ", \"dur\":" << usDelta
                     << ", \"args\":{\"id\":" << enqueueCounter
-                    << ", \"adjusted\":" << adjusted
                     << "}},\n";
             }
             else
@@ -12832,7 +12840,6 @@ void CLIntercept::chromeTraceEvent(
                     << "\", \"ts\":" << usStart
                     << ", \"dur\":" << usDelta
                     << ", \"args\":{\"id\":" << enqueueCounter
-                    << ", \"adjusted\":" << adjusted
                     << "}},\n";
             }
         }

@@ -390,6 +390,7 @@ public:
                 const std::string& functionName,
                 const uint64_t enqueueCounter,
                 const clock::time_point queuedTime,
+                const clock::time_point queuedTimeEnd,
                 const cl_kernel kernel,
                 const cl_uint workDim,
                 const size_t* gwo,
@@ -802,7 +803,8 @@ public:
                 uint64_t enqueueCounter,
                 unsigned int queueNumber,
                 cl_event event,
-                clock::time_point queuedTime );
+                clock::time_point queuedTime,
+                clock::time_point queuedTimeEnd );
 
     // USM Emulation:
     void*   emulatedHostMemAlloc(
@@ -1041,6 +1043,7 @@ private:
         std::string         KernelName;
         uint64_t            EnqueueCounter;
         clock::time_point   QueuedTime;
+        clock::time_point   QueuedTimeEnd;
         cl_kernel           Kernel;
         cl_event            Event;
     };
@@ -2736,10 +2739,13 @@ inline bool CLIntercept::checkDevicePerformanceTimingEnqueueLimits(
         }                                                                   \
         else                                                                \
         {                                                                   \
+            CLIntercept::clock::time_point  queuedTimeEnd =                 \
+                CLIntercept::clock::now();                                  \
             pIntercept->addTimingEvent(                                     \
                 __FUNCTION__,                                               \
                 enqueueCounter,                                             \
                 queuedTime,                                                 \
+                queuedTimeEnd,                                              \
                 NULL,                                                       \
                 0, NULL, NULL, NULL,                                        \
                 queue,                                                      \
@@ -2772,10 +2778,13 @@ inline bool CLIntercept::checkDevicePerformanceTimingEnqueueLimits(
         }                                                                   \
         else                                                                \
         {                                                                   \
+            CLIntercept::clock::time_point  queuedTimeEnd =                 \
+                CLIntercept::clock::now();                                  \
             pIntercept->addTimingEvent(                                     \
                 __FUNCTION__,                                               \
                 enqueueCounter,                                             \
                 queuedTime,                                                 \
+                queuedTimeEnd,                                              \
                 kernel,                                                     \
                 wd, gwo, gws, lws,                                          \
                 queue,                                                      \
