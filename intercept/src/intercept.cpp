@@ -585,6 +585,31 @@ bool CLIntercept::init()
     m_StartTime = clock::now();
     log( "Timer Started!\n" );
 
+    CLIntercept::clock::time_point  overheadEstimateStart = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  t1 = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  t2 = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  t3 = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  t4 = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  t5 = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  t6 = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  t7 = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  t8 = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  t9 = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  ta = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  tb = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  tc = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  td = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  te = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  tf = CLIntercept::clock::now();
+    CLIntercept::clock::time_point  overheadEstimateEnd = CLIntercept::clock::now();
+
+    auto overheadDelta = overheadEstimateEnd - overheadEstimateStart;
+
+    using ns = std::chrono::nanoseconds;
+    uint64_t nsOverhead= std::chrono::duration_cast<ns>(overheadEstimateEnd - overheadEstimateStart).count() / 16;
+
+    logf( "Estimated timer overhead: %" PRIu64 "ns\n", nsOverhead);
+
     if( m_Config.ChromeCallLogging ||
         m_Config.ChromePerformanceTiming )
     {
