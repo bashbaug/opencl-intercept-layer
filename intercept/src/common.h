@@ -64,21 +64,14 @@
 #if defined(_WIN32)
     #define CLI_SPRINTF(_s, _sz, _f, ...)   sprintf_s(_s, _TRUNCATE, _f, ##__VA_ARGS__)
     #define CLI_VSPRINTF(_s, _sz, _f, _a)   vsnprintf_s(_s, _TRUNCATE, _f, _a)
-    #define CLI_MEMCPY(_d, _dsz, _s, _sz)   memcpy_s(_d, _dsz, _s, _sz)
-    #define CLI_STRCAT(_d, _dsz, _s)        strcat_s(_d, _dsz, _s)
     #define CLI_STRTOK(_s, _d, _c)          strtok_s(_s, _d, _c)
-    #define CLI_C_ASSERT(e) typedef char __C_ASSERT__[(e)?1:-1]
 #else
     #if !defined(MAX_PATH)
         #define MAX_PATH    256
     #endif
     #define CLI_SPRINTF(_s, _sz, _f, ...)   snprintf(_s, _sz, _f, ##__VA_ARGS__)
     #define CLI_VSPRINTF(_s, _sz, _f, _a)   vsnprintf(_s, _sz, _f, _a)
-    // TODO: Investigate how to reliably use memcpy_s on Linux:
-    #define CLI_MEMCPY(_d, _dsz, _s, _sz)   memcpy(_d, _s, _sz)
-    #define CLI_STRCAT(_d, _dsz, _s)        strcat(_d, _s)
     #define CLI_STRTOK(_s, _d, _c)          strtok_r(_s, _d, _c)
-    #define CLI_C_ASSERT(e) typedef char __attribute__((unused)) __C_ASSERT__[(e)?1:-1]
 #endif
 
 #define CLI_STRING_BUFFER_SIZE (16 * 1024)

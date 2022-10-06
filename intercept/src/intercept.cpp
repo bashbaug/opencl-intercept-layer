@@ -3829,7 +3829,7 @@ void CLIntercept::combineProgramStrings(
             }
             if( length )
             {
-                CLI_MEMCPY(
+                memcpy_s(
                     pDst,
                     remaining,
                     strings[i],
@@ -4163,7 +4163,7 @@ bool CLIntercept::prependProgramSource(
 
                 is.read( newSingleString, filesize );
 
-                CLI_STRCAT( newSingleString, newSize, singleString );
+                strcat_s( newSingleString, newSize, singleString );
 
                 delete [] singleString;
 
@@ -4469,10 +4469,10 @@ bool CLIntercept::appendBuildOptions(
 
         if( oldOptions )
         {
-            CLI_STRCAT( newNewOptions, newSize, oldOptions );
-            CLI_STRCAT( newNewOptions, newSize, " " );
+            strcat_s( newNewOptions, newSize, oldOptions );
+            strcat_s( newNewOptions, newSize, " " );
         }
-        CLI_STRCAT( newNewOptions, newSize, append );
+        strcat_s( newNewOptions, newSize, append );
 
         delete [] newOptions;
         newOptions = newNewOptions;
@@ -7248,7 +7248,8 @@ void CLIntercept::dumpBuffersForKernel(
     CKernelArgMemMap::iterator  i = kernelArgMemMap.begin();
     while( i != kernelArgMemMap.end() )
     {
-        CLI_C_ASSERT( sizeof(void*) == sizeof(cl_mem) );
+        static_assert( sizeof(void*) == sizeof(cl_mem), "unexpected cl_mem size" );
+
         cl_uint arg_index = (*i).first;
         void*   allocation = (void*)(*i).second;
         cl_mem  memobj = (cl_mem)allocation;
@@ -7463,7 +7464,7 @@ void CLIntercept::dumpImagesForKernel(
 
     while( i != kernelArgMemMap.end() )
     {
-        CLI_C_ASSERT( sizeof(void*) == sizeof(cl_mem) );
+        static_assert( sizeof(void*) == sizeof(cl_mem), "unexpected cl_mem size" );
 
         cl_uint arg_index = (*i).first;
         cl_mem  memobj = (cl_mem)(*i).second;

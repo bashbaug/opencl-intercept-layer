@@ -39,13 +39,13 @@ struct MapToITTType<cl_double>                  { enum { value = __itt_metadata_
 // TODO: Is there a standard preprocessor define that can tell us pointer size?
 #if defined(_WIN64) || defined(__LP64__)
 
-CLI_C_ASSERT( sizeof(void*) == 8 );
+static_assert( sizeof(void*) == 8, "expected 64-bit pointer size" );
 template<typename T>
 struct MapToITTType<T*>                         { enum { value = __itt_metadata_u64     }; };
 
 #else
 
-CLI_C_ASSERT( sizeof(void*) == 4 );
+static_assert( sizeof(void*) == 4, "expected 32-bit pointer size );
 template<typename T>
 struct MapToITTType<T*>                         { enum { value = __itt_metadata_u32     }; };
 

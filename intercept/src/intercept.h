@@ -1373,7 +1373,7 @@ cl_int CLIntercept::writeVectorToMemory(
         }
         else
         {
-            CLI_MEMCPY(pointer, size, param.data(), size);
+            memcpy_s(pointer, size, param.data(), size);
         }
     }
 
