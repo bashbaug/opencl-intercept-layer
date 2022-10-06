@@ -3829,7 +3829,7 @@ void CLIntercept::combineProgramStrings(
             }
             if( length )
             {
-                memcpy_s(
+                CLI_MEMCPY(
                     pDst,
                     remaining,
                     strings[i],
@@ -4163,7 +4163,7 @@ bool CLIntercept::prependProgramSource(
 
                 is.read( newSingleString, filesize );
 
-                strcat_s( newSingleString, newSize, singleString );
+                CLI_STRCAT( newSingleString, newSize, singleString );
 
                 delete [] singleString;
 
@@ -4469,10 +4469,10 @@ bool CLIntercept::appendBuildOptions(
 
         if( oldOptions )
         {
-            strcat_s( newNewOptions, newSize, oldOptions );
-            strcat_s( newNewOptions, newSize, " " );
+            CLI_STRCAT( newNewOptions, newSize, oldOptions );
+            CLI_STRCAT( newNewOptions, newSize, " " );
         }
-        strcat_s( newNewOptions, newSize, append );
+        CLI_STRCAT( newNewOptions, newSize, append );
 
         delete [] newOptions;
         newOptions = newNewOptions;

@@ -45,7 +45,7 @@ struct MapToITTType<T*>                         { enum { value = __itt_metadata_
 
 #else
 
-static_assert( sizeof(void*) == 4, "expected 32-bit pointer size );
+static_assert( sizeof(void*) == 4, "expected 32-bit pointer size" );
 template<typename T>
 struct MapToITTType<T*>                         { enum { value = __itt_metadata_u32     }; };
 
