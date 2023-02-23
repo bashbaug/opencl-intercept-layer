@@ -228,6 +228,36 @@ if(ENABLE_ITT)
     target_link_libraries(OpenCL ${VTUNE_ITTNOTIFY_LIB} ${CMAKE_THREAD_LIBS_INIT})
 endif()
 
+# Perfetto Support (optional)
+find_path(PERFETTO_DIR sdk/perfetto.h
+    HINTS
+    "${CMAKE_SOURCE_DIR}/external/perfetto")
+if(ENABLE_PERFETTO AND NOT EXISTS "${PERFETTO_DIR}/sdk/perfetto.h")
+    message(STATUS "Couldn't find perfetto.h as ${PERFETTO_DIR}/sdk/perfetto.h!  Disabling Perfetto support.")
+    set(ENABLE_PERFETTO OFF)
+endif()
+if(ENABLE_PERFETTO AND NOT EXISTS "${PERFETTO_DIR}/sdk/perfetto.cc")
+    message(STATUS "Couldn't find perfetto.cc as ${PERFETTO_DIR}/sdk/perfetto.cc!  Disabling Perfetto support.")
+    set(ENABLE_PERFETTO OFF)
+endif()
+if(ENABLE_PERFETTO)
+    add_library(perfetto STATIC ${PERFETTO_DIR}/sdk/perfetto.cc)
+    target_include_directories(perfetto PRIVATE ${PERFETTO_DIR}/sdk)
+
+    target_compile_definitions(OpenCL PRIVATE USE_PERFETTO)
+    target_include_directories(OpenCL PRIVATE ${PERFETTO_DIR}/sdk)
+    target_link_libraries(OpenCL perfetto)
+
+    # temporarily(?) allow C++11
+    target_compile_definitions(perfetto PRIVATE PERFETTO_ALLOW_SUB_CPP17)
+    target_compile_definitions(OpenCL PRIVATE PERFETTO_ALLOW_SUB_CPP17)
+
+    if(WIN32)
+        target_compile_options(perfetto PRIVATE "/bigobj")
+        target_link_libraries(OpenCL ws2_32)
+    endif()
+endif()
+
 if(WIN32)
     foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
         string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG_UPPER)

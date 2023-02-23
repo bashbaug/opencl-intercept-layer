@@ -125,9 +125,11 @@ See your CMake documentation for more details.
 | ENABLE_CLILOADER | BOOL | Enables building the cliloader utility (cliloader is a replacement for the old cliprof utility).  Additionally, when required, enables code in the Intercept Layer for OpenCL Applications itself to enable cliloader functionality.  Default: `TRUE`
 | ENABLE_CLIPROF | BOOL | Enables building the old cliprof loader utility.  Additionally, when required, enables code in the Intercept Layer for OpenCL Applications itself to enable cliprof functionality.  Default: `FALSE`
 | ENABLE_ITT | BOOL | Enables support for Instrumentation and Tracing Technology APIs, which can be used to display OpenCL events on Intel(R) VTune(tm) timegraphs.  Default: `FALSE`
+| ENABLE_PERFETTO | BOOL | Enables Perfetto tracing support.  Default: `FALSE`
 | ENABLE_KERNEL_OVERRIDES | BOOL | Enables embedding kernel strings to override precompiled kernels and built-in kernels.  Supported for Linux and Android builds only, since Windows builds always embeds kernel strings, and embedding kernel strings is not support for OSX (yet!).  Default: `TRUE`
 | ENABLE_MDAPI | BOOL | Enables support for the Intel Metrics Discovery API, which can be used to collect and aggregate Intel GPU performance metrics.  Default: `TRUE`
 | ENABLE\_HIGH\_RESOLUTION\_CLOCK | BOOL | Use the `high_resolution_clock` for host timing instead of the default `steady_clock`.  Default: `FALSE`
+| PERFETTO_DIR | PATH | Path to the Perfetto source tree.  Only used when ENABLE_PERFETTO is set.
 | VTUNE_INCLUDE_DIR | PATH | Path to the directory containing `ittnotify.h`.  Only used when ENABLE_ITT is set.
 | VTUNE_ITTNOTIFY_LIB | FILEPATH | Path to the `ittnotify` lib.  Only used when ENABLE_ITT is set.
 
