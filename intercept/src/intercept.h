@@ -25,7 +25,7 @@
 #include "dispatch.h"
 #include "objtracker.h"
 
-#include "instrumentation.h"
+#include "tracing_itt.h"
 
 #if defined(USE_MDAPI)
 #include "MetricsDiscoveryHelper.h"

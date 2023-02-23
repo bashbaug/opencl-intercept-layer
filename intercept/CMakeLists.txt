@@ -71,12 +71,12 @@ set(CLINTERCEPT_SOURCE_FILES
     src/emulate.h
     src/enummap.cpp
     src/enummap.h
-    src/instrumentation.h
     src/intercept.cpp
     src/intercept.h
     src/main.cpp
     src/objtracker.cpp
     src/objtracker.h
+    src/tracing_itt.h
     "${CMAKE_CURRENT_BINARY_DIR}/git_version.cpp"
 )
 source_group(Source FILES
