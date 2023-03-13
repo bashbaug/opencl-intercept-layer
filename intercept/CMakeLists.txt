@@ -252,8 +252,17 @@ if(ENABLE_PERFETTO)
     target_compile_definitions(perfetto PRIVATE PERFETTO_ALLOW_SUB_CPP17)
     target_compile_definitions(OpenCL PRIVATE PERFETTO_ALLOW_SUB_CPP17)
 
-    if(WIN32)
+    if(MSVC)
         target_compile_options(perfetto PRIVATE "/bigobj")
+        target_compile_options(perfetto PRIVATE "/wd4065") # switch statement contains 'default' but no 'case' labels
+        target_compile_options(perfetto PRIVATE "/wd4267") # 'initializing': conversion from 'size_t' to 'const uint32_t', possible loss of data
+        target_compile_options(perfetto PRIVATE "/wd4996") # The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name...
+    endif()
+
+    if(WIN32)
+        target_compile_definitions(perfetto PRIVATE NOMINMAX)
+        target_compile_definitions(perfetto PRIVATE WIN32_LEAN_AND_MEAN)
+        target_compile_definitions(perfetto PRIVATE _CRT_SECURE_NO_WARNINGS)
         target_link_libraries(OpenCL ws2_32)
     endif()
 endif()
