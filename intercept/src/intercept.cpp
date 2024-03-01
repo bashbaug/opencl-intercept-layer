@@ -3443,6 +3443,14 @@ void CLIntercept::logKernelInfo(
                     sizeof(regCount),
                     &regCount,
                     NULL );
+                constexpr cl_kernel_info CL_KERNEL_BINARY_GPU_ADDRESS_INTEL = 0x10010;
+                cl_ulong gpuAddress = 0;
+                cl_int errorCode_binAddr = dispatch().clGetKernelInfo(
+                    kernel,
+                    CL_KERNEL_BINARY_GPU_ADDRESS_INTEL,
+                    sizeof(gpuAddress),
+                    &gpuAddress,
+                    nullptr);
                 if( errorCode == CL_SUCCESS )
                 {
                     logf( "    For device: %s\n",
@@ -3473,6 +3481,10 @@ void CLIntercept::logKernelInfo(
                         if( errorCode_regCount == CL_SUCCESS )
                         {
                             logf( "        Register Count: %u\n", regCount);
+                        }
+                        if( errorCode_binAddr == CL_SUCCESS )
+                        {
+                            logf( "        Binary Address: %016" PRIx64 "\n", gpuAddress );
                         }
                     }
                 }
