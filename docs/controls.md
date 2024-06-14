@@ -775,6 +775,14 @@ If set to a nonzero value, and if no other throttle hint is specified by the app
 
 If set to a nonzero value, the Intercept Layer for OpenCL Applications will attempt to relax allocation limits to enable allocations larger than CL\_DEVICE\_MAX\_MEM\_ALLOC\_SIZE.
 
+##### `DemoteDeviceUSM` (bool)
+
+If set to a nonzero value, the Intercept Layer for OpenCL Applications will demote device USM allocations to host USM allocations.  This may allow applications with high device USM requirements to run on devices with a limited amount of memory, albeit at lower performance.
+
+##### `DemoteSharedUSM` (bool)
+
+If set to a nonzero value, the Intercept Layer for OpenCL Applications will demote shared USM allocations to host USM allocations.  This may allow applications with high shared USM requirements to run on devices with a limited amount of memory, albeit at lower performance.
+
 ### Platform and Device Query Overrides
 
 ##### `PlatformName` (string)

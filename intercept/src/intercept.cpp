@@ -15008,6 +15008,10 @@ cl_int CLIntercept::trackUSMKernelExecInfo(
             cl_bool*    pBool = (cl_bool*)param_value;
 
             kernelInfo.IndirectDeviceAccess = ( pBool[0] == CL_TRUE );
+            if( config().DemoteDeviceUSM )
+            {
+                kernelInfo.IndirectHostAccess = ( pBool[0] == CL_TRUE );
+            }
             retVal = CL_SUCCESS;
         }
         break;
@@ -15018,6 +15022,10 @@ cl_int CLIntercept::trackUSMKernelExecInfo(
             cl_bool*    pBool = (cl_bool*)param_value;
 
             kernelInfo.IndirectSharedAccess = ( pBool[0] == CL_TRUE );
+            if( config().DemoteSharedUSM )
+            {
+                kernelInfo.IndirectHostAccess = ( pBool[0] == CL_TRUE );
+            }
             retVal = CL_SUCCESS;
         }
         break;

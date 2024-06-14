@@ -6776,6 +6776,17 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clSetKernelExecInfo) (
                 param_value_size,
                 param_value );
         }
+        if( ( pIntercept->config().DemoteDeviceUSM &&
+              param_name == CL_KERNEL_EXEC_INFO_INDIRECT_DEVICE_ACCESS_INTEL ) ||
+            ( pIntercept->config().DemoteSharedUSM &&
+              param_name == CL_KERNEL_EXEC_INFO_INDIRECT_SHARED_ACCESS_INTEL ) )
+        {
+            pIntercept->dispatch().clSetKernelExecInfo(
+                kernel,
+                CL_KERNEL_EXEC_INFO_INDIRECT_HOST_ACCESS_INTEL,
+                param_value_size,
+                param_value );
+        }
 
         if( retVal != CL_SUCCESS )
         {
@@ -9787,6 +9798,27 @@ CL_API_ENTRY void* CL_API_CALL clDeviceMemAllocINTEL(
             CHECK_ERROR_INIT( errcode_ret );
             HOST_PERFORMANCE_TIMING_START();
 
+            if( pIntercept->config().DemoteDeviceUSM )
+            {
+                if( ( retVal == NULL ) && newProperties )
+                {
+                    retVal = dispatchX.clHostMemAllocINTEL(
+                        context,
+                        newProperties,
+                        size,
+                        alignment,
+                        errcode_ret );
+                }
+                if( retVal == NULL )
+                {
+                    retVal = dispatchX.clHostMemAllocINTEL(
+                        context,
+                        properties,
+                        size,
+                        alignment,
+                        errcode_ret );
+                }
+            }
             if( ( retVal == NULL ) && newProperties )
             {
                 retVal = dispatchX.clDeviceMemAllocINTEL(
@@ -9863,6 +9895,27 @@ CL_API_ENTRY void* CL_API_CALL clSharedMemAllocINTEL(
             CHECK_ERROR_INIT( errcode_ret );
             HOST_PERFORMANCE_TIMING_START();
 
+            if( pIntercept->config().DemoteDeviceUSM )
+            {
+                if( ( retVal == NULL ) && newProperties )
+                {
+                    retVal = dispatchX.clHostMemAllocINTEL(
+                        context,
+                        newProperties,
+                        size,
+                        alignment,
+                        errcode_ret );
+                }
+                if( retVal == NULL )
+                {
+                    retVal = dispatchX.clHostMemAllocINTEL(
+                        context,
+                        properties,
+                        size,
+                        alignment,
+                        errcode_ret );
+                }
+            }
             if( ( retVal == NULL ) && newProperties )
             {
                 retVal = dispatchX.clSharedMemAllocINTEL(
