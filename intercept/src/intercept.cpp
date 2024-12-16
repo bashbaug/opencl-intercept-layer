@@ -13184,6 +13184,9 @@ void* CLIntercept::getExtensionFunctionAddress(
     CHECK_RETURN_EXTENSION_FUNCTION( clRetainAcceleratorINTEL );
     CHECK_RETURN_EXTENSION_FUNCTION( clReleaseAcceleratorINTEL );
 
+    // cl_intel_concurrent_dispatch
+    CHECK_RETURN_EXTENSION_FUNCTION( clGetKernelMaxConcurrentWorkGroupCountINTEL );
+
     // cl_intel_create_buffer_with_properties
     CHECK_RETURN_EXTENSION_FUNCTION( clCreateBufferWithPropertiesINTEL );
 

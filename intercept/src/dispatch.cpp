@@ -9057,6 +9057,51 @@ CL_API_ENTRY cl_int CL_API_CALL clGetKernelSuggestedLocalWorkSizeINTEL(
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// cl_intel_concurrent_dispatch
+CL_API_ENTRY cl_int CL_API_CALL clGetKernelMaxConcurrentWorkGroupCountINTEL(
+    cl_command_queue commandQueue,
+    cl_kernel kernel,
+    cl_uint workDim,
+    const size_t *globalWorkOffset,
+    const size_t *localWorkSize,
+    size_t *maxWorkGroupCount)
+{
+    CLIntercept*    pIntercept = GetIntercept();
+
+    if( pIntercept )
+    {
+        const auto& dispatchX = pIntercept->dispatchX(commandQueue);
+        if( dispatchX.clGetKernelMaxConcurrentWorkGroupCountINTEL )
+        {
+            GET_ENQUEUE_COUNTER();
+            CALL_LOGGING_ENTER_KERNEL(
+                kernel,
+                "queue = %p, kernel = %p",
+                commandQueue,
+                kernel );
+            HOST_PERFORMANCE_TIMING_START();
+
+            cl_int retVal = dispatchX.clGetKernelMaxConcurrentWorkGroupCountINTEL(
+                commandQueue,
+                kernel,
+                workDim,
+                globalWorkOffset,
+                localWorkSize,
+                maxWorkGroupCount );
+
+            HOST_PERFORMANCE_TIMING_END();
+            CHECK_ERROR( retVal );
+            CALL_LOGGING_EXIT( retVal );
+
+            return retVal;
+        }
+    }
+
+    NULL_FUNCTION_POINTER_RETURN_ERROR(CL_INVALID_COMMAND_QUEUE);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // cl_intel_accelerator
 CL_API_ENTRY cl_accelerator_intel CL_API_CALL clCreateAcceleratorINTEL(
     cl_context context,

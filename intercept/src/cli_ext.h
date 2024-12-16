@@ -1251,6 +1251,25 @@ typedef struct _cl_queue_family_properties_intel {
 #define CL_QUEUE_CAPABILITY_KERNEL_INTEL                    (1 << 26)
 
 ///////////////////////////////////////////////////////////////////////////////
+// cl_intel_concurrent_dispatch
+
+#define CL_KERNEL_EXEC_INFO_DISPATCH_TYPE_INTEL             0x4257
+
+typedef cl_uint             cl_kernel_exec_info_dispatch_type_intel;
+
+#define CL_KERNEL_EXEC_INFO_DISPATCH_TYPE_DEFAULT_INTEL     0
+#define CL_KERNEL_EXEC_INFO_DISPATCH_TYPE_CONCURRENT_INTEL  1
+
+extern CL_API_ENTRY
+cl_int CL_API_CALL clGetKernelMaxConcurrentWorkGroupCountINTEL(
+    cl_command_queue command_queue,
+    cl_kernel kernel,
+    cl_uint work_dim,
+    const size_t* global_work_offset,
+    const size_t* local_work_size,
+    size_t* max_work_group_count);
+
+///////////////////////////////////////////////////////////////////////////////
 // cl_intel_create_buffer_with_properties
 
 typedef cl_properties cl_mem_properties_intel;

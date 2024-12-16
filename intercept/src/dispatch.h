@@ -547,6 +547,15 @@ struct CLdispatchX
     cl_int (CL_API_CALL *clReleaseAcceleratorINTEL) (
         cl_accelerator_intel accelerator );
 
+    // cl_intel_concurrent_dispatch
+    cl_int (CL_API_CALL *clGetKernelMaxConcurrentWorkGroupCountINTEL) (
+        cl_command_queue command_queue,
+        cl_kernel kernel,
+        cl_uint work_dim,
+        const size_t* global_work_offset,
+        const size_t* local_work_size,
+        size_t* max_work_group_count);
+
     // cl_intel_create_buffer_with_properties
     cl_mem (CL_API_CALL *clCreateBufferWithPropertiesINTEL) (
         cl_context context,

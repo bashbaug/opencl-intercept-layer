@@ -1024,6 +1024,9 @@ CEnumNameMap::CEnumNameMap()
     ADD_ENUM_NAME( m_cl_command_queue_capabilities_intel, CL_QUEUE_CAPABILITY_BARRIER_INTEL );
     ADD_ENUM_NAME( m_cl_command_queue_capabilities_intel, CL_QUEUE_CAPABILITY_KERNEL_INTEL );
 
+    // cl_intel_concurrent_dispatch
+    ADD_ENUM_NAME( m_cl_int, CL_KERNEL_EXEC_INFO_DISPATCH_TYPE_INTEL );
+
     // cl_intel_device_attribute_query
     ADD_ENUM_NAME( m_cl_int, CL_DEVICE_IP_VERSION_INTEL );
     ADD_ENUM_NAME( m_cl_int, CL_DEVICE_ID_INTEL );
