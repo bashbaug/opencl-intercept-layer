@@ -293,7 +293,7 @@ If set to a nonzero value, the Intercept Layer for OpenCL Applications will trac
 
 ##### `ToolOverheadTiming` (bool)
 
-If set to a nonzero value, the Intercept Layer for OpenCL Applications will include some types of tool overhead in timing reports and some types of logging.
+If set to a nonzero value, the Intercept Layer for OpenCL Applications will include some types of tool overhead in timing reports and some types of logging.  Note that tool overhead may be measured while other OpenCL calls are executing, therefore the sum of all host execution times with tool overhead included may exceed the total execution time of the application.
 
 ##### `DevicePerformanceTiming` (bool)
 
