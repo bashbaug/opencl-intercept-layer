@@ -539,6 +539,9 @@ cl_int CL_API_CALL clEnqueueReleaseD3D11ObjectsKHR(
 ///////////////////////////////////////////////////////////////////////////////
 // cl_khr_device_uuid
 
+#define CL_UUID_SIZE_KHR                                    16
+#define CL_LUID_SIZE_KHR                                    8
+
 #define CL_DEVICE_UUID_KHR                                  0x106A
 #define CL_DRIVER_UUID_KHR                                  0x106B
 #define CL_DEVICE_LUID_VALID_KHR                            0x106C

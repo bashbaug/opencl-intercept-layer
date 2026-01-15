@@ -5,6 +5,7 @@
 */
 #pragma once
 
+#include <array>
 #include <atomic>
 #include <chrono>
 #include <cinttypes>
@@ -117,18 +118,18 @@ public:
                 cl_device_id device,
                 const char* extensionName ) const;
 
-    cl_int  allocateAndGetPlatformInfoString(
+    cl_int  getPlatformInfoString(
                 cl_platform_id platform,
                 cl_platform_info param_name,
-                char*& param_value ) const;
-    cl_int  allocateAndGetDeviceInfoString(
+                std::string& str ) const;
+    cl_int  getDeviceInfoString(
                 cl_device_id device,
                 cl_device_info param_name,
-                char*& param_value ) const;
-    cl_int  allocateAndGetKernelInfoString(
+                std::string& str ) const;
+    cl_int  getKernelInfoString(
                 cl_kernel kernel,
                 cl_kernel_info param_name,
-                char*& param_value ) const;
+                std::string& str ) const;
     cl_int  allocateAndGetProgramDeviceList(
                 cl_program program,
                 cl_uint& numDevices,
@@ -1161,6 +1162,8 @@ private:
         cl_device_id    ParentDevice;   // null for root devices
         cl_uint     PlatformIndex;      // zero for sub-devices
         cl_uint     DeviceIndex;
+
+        std::array<uint8_t, CL_UUID_SIZE_KHR> UUID;
 
         cl_device_type  Type;
 
