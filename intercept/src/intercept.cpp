@@ -939,7 +939,7 @@ void CLIntercept::writeReport(
 
             std::sort(keys.begin(), keys.end());
 
-            os << "    Total Time (ns): " << totalTotalNS << std::endl;
+            os << std::endl << "Total Time (ns): " << totalTotalNS << std::endl;
 
             os << std::endl
                 << std::right << std::setw(longestName) << "Function Name" << ", "
@@ -1392,14 +1392,23 @@ void CLIntercept::cacheDeviceInfo(
             << deviceMaxClockFrequency << "MHz)";
         deviceInfo.NameForReport = ss.str();
 
-        size_t majorVersion = 0;
-        size_t minorVersion = 0;
-        getDeviceMajorMinorVersion(
+        std::string deviceVersion;
+        getDeviceInfoString(
             device,
-            majorVersion,
-            minorVersion );
+            CL_DEVICE_VERSION,
+            deviceVersion );
+
+        // According to the spec, the device version string should have the form:
+        //   OpenCL <Major>.<Minor> <Vendor Specific Info>
+        size_t  major = 0;
+        size_t  minor = 0;
+        if( getMajorMinorVersionFromString(
+                "OpenCL ",
+                deviceVersion.c_str(),
+                major,
+                minor ) )
         deviceInfo.NumericVersion =
-            CL_MAKE_VERSION_KHR( majorVersion, minorVersion, 0 );
+            CL_MAKE_VERSION_KHR( major, minor, 0 );
 
         deviceInfo.NumComputeUnits = deviceComputeUnits;
         deviceInfo.MaxClockFrequency = deviceMaxClockFrequency;
@@ -1458,32 +1467,6 @@ void CLIntercept::getDeviceIndexString(
     }
 
     str = std::to_string(m_DeviceInfoMap[device].PlatformIndex) + '.' + str;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-cl_int CLIntercept::getDeviceMajorMinorVersion(
-    cl_device_id device,
-    size_t& majorVersion,
-    size_t& minorVersion ) const
-{
-    std::string deviceVersion;
-    cl_int  errorCode = getDeviceInfoString(
-        device,
-        CL_DEVICE_VERSION,
-        deviceVersion );
-    if( errorCode == CL_SUCCESS )
-    {
-        // According to the spec, the device version string should have the form:
-        //   OpenCL <Major>.<Minor> <Vendor Specific Info>
-        getMajorMinorVersionFromString(
-            "OpenCL ",
-            deviceVersion.c_str(),
-            majorVersion,
-            minorVersion );
-    }
-
-    return errorCode;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

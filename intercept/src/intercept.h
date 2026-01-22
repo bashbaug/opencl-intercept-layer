@@ -101,10 +101,6 @@ public:
     void    getDeviceIndexString(
                 cl_device_id device,
                 std::string& str );
-    cl_int  getDeviceMajorMinorVersion(
-                cl_device_id device,
-                size_t& majorVersion,
-                size_t& minorVersion ) const;
     bool    getMajorMinorVersionFromString(
                 const char* prefix,
                 const char* str,
