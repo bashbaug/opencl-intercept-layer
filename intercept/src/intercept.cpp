@@ -11441,18 +11441,16 @@ bool CLIntercept::overrideGetPlatformInfo(
                 platform,
                 CL_PLATFORM_EXTENSIONS,
                 platformExtensions );
-            if( errorCode == CL_SUCCESS )
-            {
-                // Parse the extension string even if the query returned an error.
-                // In this case we will simply return that zero extensions are supported.
-                cl_name_version_khr*    ptr = (cl_name_version_khr*)param_value;
-                errorCode = parseExtensionString(
-                    platformExtensions.c_str(),
-                    ptr,
-                    param_value_size,
-                    param_value_size_ret );
-                override = true;
-            }
+
+            // Parse the extension string even if the query returned an error.
+            // In this case we will simply return that zero extensions are supported.
+            cl_name_version_khr*    ptr = (cl_name_version_khr*)param_value;
+            errorCode = parseExtensionString(
+                platformExtensions.c_str(),
+                ptr,
+                param_value_size,
+                param_value_size_ret );
+            override = true;
         }
         break;
     case CL_PLATFORM_SEMAPHORE_TYPES_KHR:
