@@ -1179,6 +1179,7 @@ private:
         int64_t     DeviceHostTimeDeltaNS;
 
         bool        Supports_cl_khr_create_command_queue;
+        bool        Supports_cl_khr_device_uuid;
         bool        Supports_cl_khr_subgroups;
     };
 

@@ -904,6 +904,16 @@ void CLIntercept::writeReport(
             const SDeviceInfo&  deviceInfo = m_DeviceInfoMap[device];
 
             os << std::endl << "Device Performance Timing Results for " << deviceInfo.NameForReport << ":" << std::endl;
+            if( deviceInfo.Supports_cl_khr_device_uuid )
+            {
+                char str_uuid[64];
+                CLI_SPRINTF(str_uuid, 64, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+                    deviceInfo.UUID[0], deviceInfo.UUID[1], deviceInfo.UUID[2], deviceInfo.UUID[3],
+                    deviceInfo.UUID[4], deviceInfo.UUID[5], deviceInfo.UUID[6], deviceInfo.UUID[7],
+                    deviceInfo.UUID[8], deviceInfo.UUID[9], deviceInfo.UUID[10], deviceInfo.UUID[11],
+                    deviceInfo.UUID[12], deviceInfo.UUID[13], deviceInfo.UUID[14], deviceInfo.UUID[15]);
+                os << "    UUID: " << str_uuid << std::endl;
+            }
 
             std::vector<std::string> keys;
             keys.reserve(dtsm.size());
@@ -929,7 +939,7 @@ void CLIntercept::writeReport(
 
             std::sort(keys.begin(), keys.end());
 
-            os << std::endl << "Total Time (ns): " << totalTotalNS << std::endl;
+            os << "    Total Time (ns): " << totalTotalNS << std::endl;
 
             os << std::endl
                 << std::right << std::setw(longestName) << "Function Name" << ", "
@@ -1375,24 +1385,6 @@ void CLIntercept::cacheDeviceInfo(
             sizeof(deviceInfo.Type),
             &deviceInfo.Type,
             NULL );
-        bool    hasDeviceUUID =
-            dispatch().clGetDeviceInfo(
-                device,
-                CL_DEVICE_UUID_KHR,
-                sizeof(deviceInfo.UUID),
-                deviceInfo.UUID.data(),
-                NULL ) == CL_SUCCESS;
-
-        if( hasDeviceUUID )
-        {
-            char str_uuid[64];
-            CLI_SPRINTF(str_uuid, 64, " %02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-                deviceInfo.UUID[0], deviceInfo.UUID[1], deviceInfo.UUID[2], deviceInfo.UUID[3],
-                deviceInfo.UUID[4], deviceInfo.UUID[5], deviceInfo.UUID[6], deviceInfo.UUID[7],
-                deviceInfo.UUID[8], deviceInfo.UUID[9], deviceInfo.UUID[10], deviceInfo.UUID[11],
-                deviceInfo.UUID[12], deviceInfo.UUID[13], deviceInfo.UUID[14], deviceInfo.UUID[15]);
-            deviceInfo.Name += str_uuid;
-        }
 
         std::ostringstream  ss;
         ss << deviceInfo.Name << " ("
@@ -1437,6 +1429,13 @@ void CLIntercept::cacheDeviceInfo(
 
         deviceInfo.Supports_cl_khr_create_command_queue =
             checkDeviceForExtension( device, "cl_khr_create_command_queue" );
+        deviceInfo.Supports_cl_khr_device_uuid =
+            dispatch().clGetDeviceInfo(
+                device,
+                CL_DEVICE_UUID_KHR,
+                sizeof(deviceInfo.UUID),
+                deviceInfo.UUID.data(),
+                NULL ) == CL_SUCCESS;
         deviceInfo.Supports_cl_khr_subgroups =
             checkDeviceForExtension( device, "cl_khr_subgroups" );
     }
