@@ -1,5 +1,5 @@
 /*
-// Copyright (c) 2018-2025 Intel Corporation
+// Copyright (c) 2018-2026 Intel Corporation
 //
 // SPDX-License-Identifier: MIT
 */
@@ -8778,6 +8778,43 @@ CL_API_ENTRY cl_int CL_API_CALL clEnqueueReleaseDX9ObjectsINTEL(
     NULL_FUNCTION_POINTER_RETURN_ERROR(CL_INVALID_COMMAND_QUEUE);
 }
 #endif
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// cl_qcom_perf_hint
+CL_API_ENTRY cl_int CL_API_CALL clSetPerfHintQCOM(
+    cl_context context,
+    cl_perf_hint_qcom perf_hint)
+{
+    CLIntercept*    pIntercept = GetIntercept();
+
+    if( pIntercept )
+    {
+        const auto& dispatchX = pIntercept->dispatchX(context);
+        if( dispatchX.clSetPerfHintQCOM )
+        {
+            GET_ENQUEUE_COUNTER();
+
+            CALL_LOGGING_ENTER( "context = %p, perf_hint = %s (%llX)",
+                context,
+                pIntercept->enumName().name( perf_hint ).c_str(),
+                perf_hint );
+            HOST_PERFORMANCE_TIMING_START();
+
+            cl_int retVal = dispatchX.clSetPerfHintQCOM(
+                context,
+                perf_hint );
+
+            HOST_PERFORMANCE_TIMING_END();
+            CHECK_ERROR( retVal );
+            CALL_LOGGING_EXIT( retVal );
+
+            return retVal;
+        }
+    }
+
+    NULL_FUNCTION_POINTER_RETURN_ERROR(CL_INVALID_CONTEXT);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //

@@ -1,5 +1,5 @@
 /*
-// Copyright (c) 2018-2025 Intel Corporation
+// Copyright (c) 2018-2026 Intel Corporation
 //
 // SPDX-License-Identifier: MIT
 */
@@ -899,9 +899,11 @@ CEnumNameMap::CEnumNameMap()
     ADD_ENUM_NAME( m_cl_int, CL_SVM_INFO_CAPABILITIES_KHR );
     ADD_ENUM_NAME( m_cl_int, CL_SVM_INFO_PROPERTIES_KHR );
     ADD_ENUM_NAME( m_cl_int, CL_SVM_INFO_ACCESS_FLAGS_KHR );
-    ADD_ENUM_NAME( m_cl_int, CL_SVM_INFO_BASE_PTR_KHR );
-    ADD_ENUM_NAME( m_cl_int, CL_SVM_INFO_SIZE_KHR );
-    ADD_ENUM_NAME( m_cl_int, CL_SVM_INFO_ASSOCIATED_DEVICE_HANDLE_KHR );
+    // These enums alias with cl_intel_unified_shared_memory.
+    // TODO: switch to the KHR versions with cl_khr_unified_svm is final.
+    //ADD_ENUM_NAME( m_cl_int, CL_SVM_INFO_BASE_PTR_KHR );
+    //ADD_ENUM_NAME( m_cl_int, CL_SVM_INFO_SIZE_KHR );
+    //ADD_ENUM_NAME( m_cl_int, CL_SVM_INFO_ASSOCIATED_DEVICE_HANDLE_KHR );
 
     ADD_ENUM_NAME( m_cl_int, CL_KERNEL_EXEC_INFO_SVM_INDIRECT_ACCESS_KHR );
 
@@ -946,6 +948,14 @@ CEnumNameMap::CEnumNameMap()
     ADD_ENUM_NAME( m_cl_int, CL_IMAGE_REQUIREMENTS_MAX_HEIGHT_EXT );
     ADD_ENUM_NAME( m_cl_int, CL_IMAGE_REQUIREMENTS_MAX_DEPTH_EXT );
     ADD_ENUM_NAME( m_cl_int, CL_IMAGE_REQUIREMENTS_MAX_ARRAY_SIZE_EXT );
+
+    // cl_ext_image_unsigned_10x6_12x4_14x2
+    ADD_ENUM_NAME( m_cl_int, CL_UNSIGNED_INT10X6_EXT );
+    ADD_ENUM_NAME( m_cl_int, CL_UNSIGNED_INT12X4_EXT );
+    ADD_ENUM_NAME( m_cl_int, CL_UNSIGNED_INT14X2_EXT );
+    ADD_ENUM_NAME( m_cl_int, CL_UNORM_INT10X6_EXT );
+    ADD_ENUM_NAME( m_cl_int, CL_UNORM_INT12X4_EXT );
+    ADD_ENUM_NAME( m_cl_int, CL_UNORM_INT14X2_EXT );
 
     // cl_ext_immutable_memory_objects
     ADD_ENUM_NAME( m_cl_mem_flags, CL_MEM_IMMUTABLE_EXT );
@@ -1036,6 +1046,21 @@ CEnumNameMap::CEnumNameMap()
     // cl_img_mem_properties
     ADD_ENUM_NAME( m_cl_int, CL_MEM_ALLOC_FLAGS_IMG );
     ADD_ENUM_NAME( m_cl_int, CL_DEVICE_MEMORY_CAPABILITIES_IMG );
+
+    // cl_img_safety_mechanisms
+    ADD_ENUM_NAME( m_cl_int, CL_CONTEXT_SAFETY_PROPERTIES_IMG );
+    ADD_ENUM_NAME( m_cl_int, CL_DEVICE_WORKGROUP_PROTECTION_SVM_CAPABILITIES_IMG );
+    ADD_ENUM_NAME( m_cl_int, CL_DEVICE_WORKGROUP_PROTECTION_DEVICE_ENQUEUE_CAPABILITIES_IMG );
+    ADD_ENUM_NAME( m_cl_int, CL_DEVICE_SAFETY_MEM_SIZE_IMG );
+    ADD_ENUM_NAME( m_cl_int, CL_ECC_RECOVERED_IMG );
+    ADD_ENUM_NAME( m_cl_int, CL_PAGE_FAULT_IMG );
+    ADD_ENUM_NAME( m_cl_int, CL_SAFETY_FAULT_IMG );
+    ADD_ENUM_NAME( m_cl_int, CL_GENERAL_FAULT_IMG );
+    ADD_ENUM_NAME( m_cl_int, CL_ECC_UNRECOVERED_IMG );
+
+    // cl_img_unified_svm_external_memory_dma_buf
+    ADD_ENUM_NAME( m_cl_int, CL_SVM_ALLOC_EXTERNAL_MEMORY_DMA_BUF_VIRTUAL_ADDRESS_IMG );
+    ADD_ENUM_NAME( m_cl_int, CL_SVM_ALLOC_EXTERNAL_MEMORY_DMA_BUF_IMG );
 
     // cl_img_yuv_image
     ADD_ENUM_NAME( m_cl_int, CL_NV21_IMG );
@@ -1280,6 +1305,12 @@ CEnumNameMap::CEnumNameMap()
 
     // cl_qcom_ion_host_ptr extension
     ADD_ENUM_NAME( m_cl_int, CL_MEM_ION_HOST_PTR_QCOM );
+
+    // cl_qcom_perf_hint
+    ADD_ENUM_NAME( m_cl_int, CL_PERF_HINT_HIGH_QCOM );
+    ADD_ENUM_NAME( m_cl_int, CL_PERF_HINT_NORMAL_QCOM );
+    ADD_ENUM_NAME( m_cl_int, CL_PERF_HINT_LOW_QCOM );
+    ADD_ENUM_NAME( m_cl_int, CL_CONTEXT_PERF_HINT_QCOM );
 
     // Unofficial MDAPI extension:
     ADD_ENUM_NAME( m_cl_int, CL_QUEUE_MDAPI_PROPERTIES_INTEL );

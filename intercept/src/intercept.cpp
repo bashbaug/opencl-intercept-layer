@@ -1,5 +1,5 @@
 /*
-// Copyright (c) 2018-2025 Intel Corporation
+// Copyright (c) 2018-2026 Intel Corporation
 //
 // SPDX-License-Identifier: MIT
 */
@@ -2197,6 +2197,14 @@ void CLIntercept::getContextPropertiesString(
                     str += enumName().name_bool( value );
                 }
                 break;
+            case CL_CONTEXT_MEMORY_INITIALIZE_KHR:  // cl_context_memory_initialize_khr
+            case CL_CONTEXT_SAFETY_PROPERTIES_IMG:  // cl_context_safety_properties_img
+                {
+                    const cl_ulong* pu = (const cl_ulong*)( properties + 1);
+                    CLI_SPRINTF( s, 256, "0x%" PRIx64, pu[0] );
+                    str += s;
+                }
+                break;
             case CL_PRINTF_BUFFERSIZE_ARM:
                 {
                     const size_t*   psz = (const size_t*)( properties + 1);
@@ -2205,9 +2213,13 @@ void CLIntercept::getContextPropertiesString(
                     str += s;
                 }
                 break;
-            case CL_CONTEXT_MEMORY_INITIALIZE_KHR:
-                // TODO: this is a cl_context_memory_initialize_khr bitfield.
-                // Fall through for now.
+            case CL_CONTEXT_PERF_HINT_QCOM:
+                {
+                    const cl_uint*  pu = (const cl_uint*)( properties + 1);
+                    cl_uint value = pu[0];
+                    str += enumName().name( value );
+                }
+                break;
             default:
                 {
                     CLI_SPRINTF( s, 256, "<Unknown %08X!>", (cl_uint)property );
@@ -2529,6 +2541,22 @@ void CLIntercept::getSVMAllocPropertiesString(
                     properties += 2;
                 }
                 break;
+            case CL_SVM_ALLOC_EXTERNAL_MEMORY_DMA_BUF_VIRTUAL_ADDRESS_IMG:
+                {
+                    auto pptr = (const void**)( properties + 1);
+                    CLI_SPRINTF( s, 256, "%p", pptr[0] );
+                    str += s;
+                    properties += 2;
+                }
+                break;
+            case CL_SVM_ALLOC_EXTERNAL_MEMORY_DMA_BUF_IMG:
+                {
+                    auto pfd = (const int*)( properties + 1);
+                    CLI_SPRINTF( s, 256, "%d", pfd[0] );
+                    str += s;
+                    properties += 2;
+                }
+                break;
             default:
                 {
                     CLI_SPRINTF( s, 256, "<Unknown %08X!>", (cl_uint)property );
@@ -2702,8 +2730,8 @@ void CLIntercept::getSemaphorePropertiesString(
             case CL_SEMAPHORE_HANDLE_OPAQUE_WIN32_KHR:
             case CL_SEMAPHORE_HANDLE_OPAQUE_WIN32_KMT_KHR:
                 {
-                    auto pfd = (const void**)( properties + 1);
-                    CLI_SPRINTF( s, 256, "%p", pfd[0] );
+                    auto ph = (const void**)( properties + 1);
+                    CLI_SPRINTF( s, 256, "%p", ph[0] );
                     str += s;
                     properties += 2;
                 }
@@ -13584,6 +13612,9 @@ void* CLIntercept::getExtensionFunctionAddress(
 
     // cl_ext_image_requirements_info
     CHECK_RETURN_EXTENSION_FUNCTION( clGetImageRequirementsInfoEXT );
+
+    // cl_qcom_perf_hint
+    CHECK_RETURN_EXTENSION_FUNCTION( clSetPerfHintQCOM );
 
     // Unofficial MDAPI extension:
     CHECK_RETURN_EXTENSION_FUNCTION( clCreatePerfCountersCommandQueueINTEL );
