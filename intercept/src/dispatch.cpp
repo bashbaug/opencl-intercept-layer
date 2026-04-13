@@ -5279,6 +5279,7 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clEnqueueMarkerWithWaitList)(
                 command_queue,
                 eventWaitListString.c_str() );
             CHECK_EVENT_LIST( num_events_in_wait_list, event_wait_list, event );
+            DEVICE_PERFORMANCE_TIMING_START( event );
             HOST_PERFORMANCE_TIMING_START();
 
             retVal = pIntercept->dispatch().clEnqueueMarkerWithWaitList(
@@ -5288,6 +5289,7 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clEnqueueMarkerWithWaitList)(
                 event );
 
             HOST_PERFORMANCE_TIMING_END();
+            DEVICE_PERFORMANCE_TIMING_END( command_queue, retVal, event );
             CHECK_ERROR( retVal );
             ADD_OBJECT_ALLOCATION_EVENT( retVal, event );
             CALL_LOGGING_EXIT_EVENT( retVal, event );
@@ -5332,6 +5334,7 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clEnqueueBarrierWithWaitList)(
                 command_queue,
                 eventWaitListString.c_str() );
             CHECK_EVENT_LIST( num_events_in_wait_list, event_wait_list, event );
+            DEVICE_PERFORMANCE_TIMING_START( event );
             HOST_PERFORMANCE_TIMING_START();
 
             retVal = pIntercept->dispatch().clEnqueueBarrierWithWaitList(
@@ -5341,6 +5344,7 @@ CL_API_ENTRY cl_int CL_API_CALL CLIRN(clEnqueueBarrierWithWaitList)(
                 event );
 
             HOST_PERFORMANCE_TIMING_END();
+            DEVICE_PERFORMANCE_TIMING_END( command_queue, retVal, event );
             CHECK_ERROR( retVal );
             ADD_OBJECT_ALLOCATION_EVENT( retVal, event );
             CALL_LOGGING_EXIT_EVENT( retVal, event );
