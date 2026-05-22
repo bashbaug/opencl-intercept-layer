@@ -434,8 +434,6 @@ void CLIntercept::getMDAPICountersFromEvent(
             report.data(),
             &outputSize );
 
-        std::lock_guard<std::mutex> lock(m_Mutex);
-
         if( errorCode == CL_SUCCESS )
         {
             // Check: The size of the queried report should be the expected size.
@@ -453,6 +451,7 @@ void CLIntercept::getMDAPICountersFromEvent(
 
             if( numResults )
             {
+                std::lock_guard<std::mutex> lock(m_Mutex);
                 m_pMDHelper->PrintMetricValues(
                     m_MetricDump,
                     name,
@@ -479,6 +478,7 @@ void CLIntercept::getMDAPICountersFromEvent(
                 NULL );
             if( type == CL_COMMAND_NDRANGE_KERNEL )
             {
+                std::lock_guard<std::mutex> lock(m_Mutex);
                 logf("Couldn't get MDAPI data for kernel!  clGetEventProfilingInfo returned '%s' (%08X)!\n",
                     enumName().name(errorCode).c_str(),
                     errorCode );
