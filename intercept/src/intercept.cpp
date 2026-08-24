@@ -5,10 +5,12 @@
 */
 
 #include <algorithm>
+#include <cmath>
 #include <errno.h>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <numeric>
 #include <stdarg.h>
 #include <sstream>
 #include <time.h>       // strdate
@@ -6604,6 +6606,21 @@ void CLIntercept::checkTimingEvents()
     CEventList::const_iterator  current = m_EventList.begin();
     CEventList::const_iterator  next;
 
+    using us = std::chrono::microseconds;
+
+    clock::time_point startTime = clock::now();
+    size_t processed = 0;
+    size_t skipped = 0;
+    uint64_t usQueryStatus = 0;
+    uint64_t usQueryProfilingData = 0;
+    uint64_t usMutex = 0;
+    uint64_t usProcess = 0;
+    uint64_t usRelease = 0;
+    uint64_t usErase = 0;
+
+    std::vector<uint32_t> usReleaseTimes;
+    usReleaseTimes.reserve(16 * 1024 * 1024);
+
     while( current != m_EventList.end() )
     {
         if( config().MultiThreadedProcessing &&
@@ -6623,18 +6640,21 @@ void CLIntercept::checkTimingEvents()
 
         const CEventList::Node& node = *current;
 
+        clock::time_point startQueryStatus = clock::now();
         errorCode = dispatch().clGetEventInfo(
             node.Event,
             CL_EVENT_COMMAND_EXECUTION_STATUS,
             sizeof( eventStatus ),
             &eventStatus,
             NULL );
+        usQueryStatus += std::chrono::duration_cast<us>(clock::now() - startQueryStatus).count();
 
         switch( errorCode )
         {
         case CL_SUCCESS:
             if( eventStatus == CL_COMPLETE )
             {
+                ++processed;
                 if( config().DevicePerformanceTiming ||
                     config().ITTPerformanceTiming ||
                     config().ChromePerformanceTiming )
@@ -6644,6 +6664,7 @@ void CLIntercept::checkTimingEvents()
                     cl_ulong    commandStart = 0;
                     cl_ulong    commandEnd = 0;
 
+                    clock::time_point startQueryProfilingData = clock::now();
                     errorCode |= dispatch().clGetEventProfilingInfo(
                         node.Event,
                         CL_PROFILING_COMMAND_QUEUED,
@@ -6668,10 +6689,14 @@ void CLIntercept::checkTimingEvents()
                         sizeof( commandEnd ),
                         &commandEnd,
                         NULL );
+                    usQueryProfilingData += std::chrono::duration_cast<us>(clock::now() - startQueryProfilingData).count();
                     if( errorCode == CL_SUCCESS )
                     {
+                        clock::time_point startMutex = clock::now();
                         std::lock_guard<std::mutex> lock(m_Mutex);
+                        usMutex += std::chrono::duration_cast<us>(clock::now() - startMutex).count();
 
+                        clock::time_point startProcess = clock::now();
                         cl_ulong delta = commandEnd - commandStart;
 
                         SDeviceTimingStats& deviceTimingStats = m_DeviceTimingStatsMap[node.Device][node.Name];
@@ -6761,6 +6786,7 @@ void CLIntercept::checkTimingEvents()
                             CLI_ASSERT( bin < cNumBins );
                             histogram.Bins[bin]++;
                         }
+                        usProcess += std::chrono::duration_cast<us>(clock::now() - startProcess).count();
                     }
                 }
 
@@ -6773,9 +6799,14 @@ void CLIntercept::checkTimingEvents()
                 }
 #endif
 
+                clock::time_point startRelease = clock::now();
                 dispatch().clReleaseEvent( node.Event );
+                usReleaseTimes.push_back(std::chrono::duration_cast<us>(clock::now() - startRelease).count());
+                usRelease += usReleaseTimes.back();
 
+                clock::time_point startErase = clock::now();
                 m_EventList.erase( current );
+                usErase += std::chrono::duration_cast<us>(clock::now() - startErase).count();
             }
             break;
         case CL_INVALID_EVENT:
@@ -6793,10 +6824,102 @@ void CLIntercept::checkTimingEvents()
             break;
         default:
             // nothing
+            ++skipped;
             break;
         }
 
         current = next;
+    }
+
+    {
+        uint64_t usDelta = std::chrono::duration_cast<us>(clock::now() - startTime).count();
+
+        std::lock_guard<std::mutex> lock(m_Mutex);
+        logf( "checkTimingEvents complete! processed %zu events, skipped %zu events.\n",
+            processed, skipped);
+        logf( "    usTotal = %u (%.2f)\n", (uint32_t)usDelta, (float)usDelta / (processed + skipped));
+        logf( "    usQueryStatus = %u (%.2f)\n", (uint32_t)usQueryStatus, (float)usQueryStatus / (processed + skipped));
+        usDelta -= usQueryStatus;
+        logf( "    usQueryProfilingData = %u (%.2f)\n", (uint32_t)usQueryProfilingData, (float)usQueryProfilingData / processed);
+        usDelta -= usQueryProfilingData;
+        logf( "    usMutex = %u (%.2f)\n", (uint32_t)usMutex, (float)usMutex / processed);
+        usDelta -= usMutex;
+        logf( "    usProcess = %u (%.2f)\n", (uint32_t)usProcess, (float)usProcess / processed);
+        usDelta -= usProcess;
+        logf( "    usRelease = %u (%.2f)\n", (uint32_t)usRelease, (float)usRelease / processed);
+        usDelta -= usRelease;
+        logf( "    usErase = %u (%.2f)\n", (uint32_t)usErase, (float)usErase / processed);
+        usDelta -= usErase;
+        logf( "    unaccounted = %u (%.2f)\n", (uint32_t)usDelta, (float)usDelta / (processed + skipped));
+
+        if( !usReleaseTimes.empty() )
+        {
+            const size_t count = usReleaseTimes.size();
+
+            if( count > 1024 * 1024 )
+            {
+                std::string fileName = "";
+                OS().GetDumpDirectoryName( sc_DumpDirectoryName, fileName );
+                fileName += "/usReleaseTimes.txt";
+                OS().MakeDumpDirectories( fileName );
+
+                std::ofstream os( fileName, std::ios::out );
+                if( os.good() )
+                {
+                    for( uint32_t time : usReleaseTimes )
+                    {
+                        os << time << "\n";
+                    }
+                }
+                else
+                {
+                    logf( "Failed to open file for writing: %s\n", fileName.c_str() );
+                }
+            }
+
+            std::sort( usReleaseTimes.begin(), usReleaseTimes.end() );
+
+            if( count > 1024 * 1024 )
+            {
+                std::string fileName = "";
+                OS().GetDumpDirectoryName( sc_DumpDirectoryName, fileName );
+                fileName += "/usReleaseTimesSorted.txt";
+                OS().MakeDumpDirectories( fileName );
+
+                std::ofstream os( fileName, std::ios::out );
+                if( os.good() )
+                {
+                    for( uint32_t time : usReleaseTimes )
+                    {
+                        os << time << "\n";
+                    }
+                }
+                else
+                {
+                    logf( "Failed to open file for writing: %s\n", fileName.c_str() );
+                }
+            }
+
+            const double sum = std::accumulate(
+                usReleaseTimes.begin(), usReleaseTimes.end(), 0.0 );
+            const double average = sum / count;
+
+            double variance = 0.0;
+            for( uint32_t time : usReleaseTimes )
+            {
+                const double delta = time - average;
+                variance += delta * delta;
+            }
+            variance /= count;
+            const double stdDev = std::sqrt( variance );
+
+            const double median = ( count % 2 == 0 ) ?
+                ( usReleaseTimes[count / 2 - 1] + usReleaseTimes[count / 2] ) / 2.0 :
+                usReleaseTimes[count / 2];
+
+            logf( "    usReleaseTimes: average = %.2f, min = %u, max = %u, median = %.2f, stddev = %.2f\n",
+                average, usReleaseTimes.front(), usReleaseTimes.back(), median, stdDev );
+        }
     }
 
 #if defined(USE_MDAPI)
